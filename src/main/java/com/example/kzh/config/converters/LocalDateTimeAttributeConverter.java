@@ -12,8 +12,6 @@ import static com.example.kzh.constants.ValueConstants.ZONE_ID;
 @Converter(autoApply = true)
 @Slf4j
 public class LocalDateTimeAttributeConverter implements AttributeConverter<LocalDateTime, Long> {
-
-
     @Override
     public Long convertToDatabaseColumn(LocalDateTime locDateTime) {
         if (locDateTime == null) return null;
