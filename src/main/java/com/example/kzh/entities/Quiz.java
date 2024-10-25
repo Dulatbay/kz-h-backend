@@ -15,7 +15,7 @@ public class Quiz extends AbstractEntity<Long> {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "desc", nullable = false)
+    @Column(name = "description", nullable = false)
     private String description;
 
     @Column(name = "has_image", nullable = false)
