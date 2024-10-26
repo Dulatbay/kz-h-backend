@@ -18,7 +18,7 @@ public class Notes extends AbstractEntity<Long> {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "offset")
+    @Column(name = "position_offset")
     private int offset;
 
     @Column(name = "div_id")

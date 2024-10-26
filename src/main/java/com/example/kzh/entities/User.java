@@ -1,5 +1,6 @@
 package com.example.kzh.entities;
 
+import com.example.kzh.entities.enums.Role;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -9,7 +10,7 @@ import java.util.Set;
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = false)
-@Table(name = "user")
+@Table(name = "_users")
 public class User extends AbstractEntity<Long> {
 
     @Column(name = "first_name", nullable = false)
@@ -50,4 +51,9 @@ public class User extends AbstractEntity<Long> {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Set<Variant> variants;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    private Role role;
+
 }
