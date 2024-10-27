@@ -33,7 +33,7 @@ public class Quiz extends AbstractEntity<Long> {
     @Column(name = "is_immediately_results", nullable = false)
     private boolean isImmediatelyResults;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", nullable = false)
     private User user;
 

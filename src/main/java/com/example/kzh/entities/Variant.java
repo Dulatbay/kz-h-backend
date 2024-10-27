@@ -12,7 +12,7 @@ import java.util.Set;
 @Table(name = "variant")
 public class Variant extends AbstractEntity<Long> {
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", nullable = false)
     private User user;
 

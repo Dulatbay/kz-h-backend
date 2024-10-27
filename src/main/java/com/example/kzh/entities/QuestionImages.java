@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
 @Table(name = "question_images")
 public class QuestionImages extends AbstractEntity<Long> {
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id", nullable = false)
     private Question question;
 
