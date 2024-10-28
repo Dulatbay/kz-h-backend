@@ -47,15 +47,6 @@ public class Quiz extends AbstractEntity<Long> {
     private Set<PassedQuiz> passedQuizzes;
 
 
-    public Quiz(String title, String description, boolean hasImage, boolean isVerified, boolean isDurationPerQuestion, int duration, boolean isImmediatelyResults, User user) {
-        this.title = title;
-        this.description = description;
-        this.hasImage = hasImage;
-        this.isVerified = isVerified;
-        this.isDurationPerQuestion = isDurationPerQuestion;
-        this.duration = duration;
-        this.isImmediatelyResults = isImmediatelyResults;
-        this.user = user;
-    }
+
 }
 

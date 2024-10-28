@@ -18,8 +18,4 @@ public class QuizQuestions extends AbstractEntity<Long> {
     @JoinColumn(name = "question_id", nullable = false)
     private Question question;
 
-    public QuizQuestions(Quiz quiz, Question question) {
-        this.quiz = quiz;
-        this.question = question;
-    }
 }

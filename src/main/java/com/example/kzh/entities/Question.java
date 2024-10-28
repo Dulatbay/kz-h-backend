@@ -58,15 +58,5 @@ public class Question extends AbstractEntity<Long> {
             fetch = FetchType.LAZY)
     private Set<QuestionVariant> questionVariants;
 
-    public Question(String content, boolean hasImage, int correctVariantIndex, int level, boolean isVerified, boolean hasTerm, User user, Topic topic) {
-        this.content = content;
-        this.hasImage = hasImage;
-        this.correctVariantIndex = correctVariantIndex;
-        this.level = level;
-        this.isVerified = isVerified;
-        this.hasTerm = hasTerm;
-        this.user = user;
-        this.topic = topic;
-    }
 }
 
