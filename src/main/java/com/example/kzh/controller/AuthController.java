@@ -1,9 +1,9 @@
 package com.example.kzh.controller;
 
 
-import com.example.kzh.dto.request.AuthRequestDto;
+import com.example.kzh.dto.request.AuthRequest;
 import com.example.kzh.dto.request.RegisterUserRequestDto;
-import com.example.kzh.dto.response.AuthResponseDto;
+import com.example.kzh.dto.response.AuthResponse;
 import com.example.kzh.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -31,9 +31,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDto> loginUser(@Valid @RequestBody AuthRequestDto authRequestDto){
-        AuthResponseDto authResponseDto = authService.authenticateUser(authRequestDto);
-        return ResponseEntity.ok(authResponseDto);
+    public ResponseEntity<AuthResponse> loginUser(@Valid @RequestBody AuthRequest authRequest){
+        AuthResponse authResponse = authService.authenticateUser(authRequest);
+        return ResponseEntity.ok(authResponse);
     }
 
     @PostMapping("/refresh-token")

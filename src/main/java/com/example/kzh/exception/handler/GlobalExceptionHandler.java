@@ -1,8 +1,8 @@
-package com.example.kzh.exception.advice;
+package com.example.kzh.exception.handler;
 
 
-import com.example.kzh.dto.response.ErrorResponseDto;
-import com.example.kzh.exception.DbRowNotFoundException;
+import com.example.kzh.dto.response.ErrorResponse;
+import com.example.kzh.exception.DbNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,29 +18,35 @@ import java.util.Arrays;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(DbRowNotFoundException.class)
-    public ResponseEntity<ErrorResponseDto> handlePositionNotFoundException(DbRowNotFoundException ex) {
+    @ExceptionHandler(DbNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handlePositionNotFoundException(DbNotFoundException ex) {
         log.error("DbRowNotFoundException exception: ", ex);
-        ErrorResponseDto errorResponse = new ErrorResponseDto(ex.getError(), ex.getMessage(), getStackTrace(ex));
+        ErrorResponse errorResponse = new ErrorResponse(ex.getError(), ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponseDto> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         log.error("MethodArgumentNotValidException exception: ", ex);
-        ErrorResponseDto errorResponse = new ErrorResponseDto(
+        ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                ex.getBindingResult().getAllErrors().get(0).getDefaultMessage(),
-                getStackTrace(ex)
+                ex.getBindingResult().getAllErrors().get(0).getDefaultMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(IllegalArgumentException ex) {
+        log.error("IllegalArgumentException exception: ", ex);
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                ex.getMessage()
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     private static String getStackTrace(Throwable ex) {
-        //filter stackTrace
         filterStackTracesByProjectPackage(ex);
 
-        //convert stackTrace to String
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         ex.printStackTrace(pw);

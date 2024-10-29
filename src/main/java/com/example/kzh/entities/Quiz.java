@@ -24,14 +24,12 @@ public class Quiz extends AbstractEntity<Long> {
     @Column(name = "is_verified", nullable = false)
     private boolean isVerified;
 
-    @Column(name = "is_duration_per_question", nullable = false)
-    private boolean isDurationPerQuestion;
-
     @Column(name = "duration", nullable = false)
     private int duration;
 
-    @Column(name = "is_immediately_results", nullable = false)
-    private boolean isImmediatelyResults;
+    // todo: trigger
+    @Column(name = "level", nullable = false)
+    private double level;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", nullable = false)

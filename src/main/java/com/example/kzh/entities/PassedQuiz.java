@@ -24,6 +24,9 @@ public class PassedQuiz extends AbstractEntity<Long> {
     @Column(name = "ended_at", nullable = false)
     private LocalDateTime endedAt;
 
+    @Column(name = "average")
+    private double average;
+
     @OneToMany(mappedBy = "passedQuiz", fetch = FetchType.LAZY)
     private Set<PassedQuizQuestion> passedQuizQuestions;
 }

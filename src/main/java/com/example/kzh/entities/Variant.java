@@ -3,6 +3,7 @@ package com.example.kzh.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.Set;
 
@@ -20,6 +21,7 @@ public class Variant extends AbstractEntity<Long> {
     private String content;
 
     @Column(name = "is_verified", nullable = false)
+    @ColumnDefault("false")
     private boolean isVerified;
 
     @OneToMany(mappedBy = "variant", fetch = FetchType.LAZY)

@@ -11,11 +11,11 @@ import lombok.EqualsAndHashCode;
 public class PassedQuizQuestion extends AbstractEntity<Long> {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "passed_user_question_id", nullable = false)
+    @JoinColumn(name = "passed_question_id", nullable = false)
     private PassedQuestion passedQuestion;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "passed_user_quiz_id", nullable = false)
+    @JoinColumn(name = "passed_quiz_id", nullable = false)
     private PassedQuiz passedQuiz;
 }
 
