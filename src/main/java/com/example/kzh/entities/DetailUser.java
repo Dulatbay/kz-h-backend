@@ -3,17 +3,18 @@ package com.example.kzh.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+@Setter
+@Getter
 @Entity
-@Data
-@EqualsAndHashCode(callSuper = false)
 @Table(name = "detail_user")
 public class DetailUser extends AbstractEntity<Long> {
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @OneToOne(fetch = FetchType.LAZY)

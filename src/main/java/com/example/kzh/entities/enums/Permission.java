@@ -1,4 +1,4 @@
-package com.example.kzh.entities;
+package com.example.kzh.entities.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

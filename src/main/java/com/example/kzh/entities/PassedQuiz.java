@@ -3,13 +3,15 @@ package com.example.kzh.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Set;
 
+@Setter
+@Getter
 @Entity
-@Data
-@EqualsAndHashCode(callSuper = false)
 @Table(name = "passed_quiz")
 public class PassedQuiz extends AbstractEntity<Long> {
 

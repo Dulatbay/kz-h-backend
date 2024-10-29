@@ -4,6 +4,7 @@ import com.example.kzh.config.converters.LocalDateTimeAttributeConverter;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.io.Serializable;
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 
 import static com.example.kzh.constants.ValueConstants.ZONE_ID;
 
-@EqualsAndHashCode
+@Setter
 @Getter
 @MappedSuperclass
 public abstract class AbstractEntity<T extends Serializable> {
