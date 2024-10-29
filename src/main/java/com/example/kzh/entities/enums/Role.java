@@ -1,6 +1,5 @@
 package com.example.kzh.entities.enums;
 
-import com.example.kzh.entities.Permission;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -9,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.example.kzh.entities.Permission.*;
+import static com.example.kzh.entities.enums.Permission.*;
 
 @Getter
 @RequiredArgsConstructor

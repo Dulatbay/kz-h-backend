@@ -1,14 +1,16 @@
 package com.example.kzh.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import java.util.Set;
 
+@Setter
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@Data
-@EqualsAndHashCode(callSuper = false)
 @Table(name = "quiz")
 public class Quiz extends AbstractEntity<Long> {
 
@@ -38,13 +40,13 @@ public class Quiz extends AbstractEntity<Long> {
     @JoinColumn(name = "author_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "quiz", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "quiz", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<RatingQuiz> ratingQuizzes;
 
-    @OneToMany(mappedBy = "quiz", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "quiz", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<QuizQuestions> quizQuestions;
 
-    @OneToMany(mappedBy = "quiz", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "quiz", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<PassedQuiz> passedQuizzes;
 }
 

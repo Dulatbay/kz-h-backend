@@ -2,9 +2,7 @@ package com.example.kzh.entities;
 
 import com.example.kzh.entities.enums.Role;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -12,11 +10,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-@Entity
-@Data
-@EqualsAndHashCode(callSuper = false)
-@Table(name = "kzh_user")
+@Setter
+@Getter
 @NoArgsConstructor
+@Entity
+@Table(name = "kzh_user")
 public class User extends AbstractEntity<Long> implements UserDetails {
 
     @Column(name = "first_name", nullable = false)
@@ -31,7 +29,8 @@ public class User extends AbstractEntity<Long> implements UserDetails {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private DetailUser detailUser;
 
     @OneToMany(mappedBy = "user",

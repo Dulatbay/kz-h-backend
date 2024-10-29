@@ -1,24 +1,25 @@
 package com.example.kzh.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import java.util.Set;
 
-@EqualsAndHashCode(callSuper = false)
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@Data
 @Table(name = "question")
 public class Question extends AbstractEntity<Long> {
 
-    @Column(name = "content", nullable = false)
-    private String content;
+    @Column(name = "text", nullable = false)
+    private String questionText;
 
     @Column(name = "has_image")
     private boolean hasImage;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "correct_variant_id", nullable = false)
     private Variant correctVariant;
 
@@ -40,23 +41,28 @@ public class Question extends AbstractEntity<Long> {
     private Topic topic;
 
     @OneToMany(mappedBy = "question",
-            fetch = FetchType.LAZY)
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL)
     private Set<QuestionTerm> questionTerm;
 
     @OneToMany(mappedBy = "question",
-            fetch = FetchType.LAZY)
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL)
     private Set<QuestionImages> questionImages;
 
     @OneToMany(mappedBy = "question",
-            fetch = FetchType.LAZY)
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL)
     private Set<PassedQuestion> passedQuestions;
 
     @OneToMany(mappedBy = "question",
-        fetch = FetchType.LAZY)
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL)
     private Set<QuizQuestions> questions;
 
     @OneToMany(mappedBy = "question",
-            fetch = FetchType.LAZY)
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL)
     private Set<QuestionVariant> questionVariants;
 
 }

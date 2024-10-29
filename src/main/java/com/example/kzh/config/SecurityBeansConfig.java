@@ -1,9 +1,11 @@
 package com.example.kzh.config;
 
+import com.example.kzh.exception.DbNotFoundException;
 import com.example.kzh.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -23,7 +25,7 @@ public class SecurityBeansConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> (UserDetails) repository.findUserByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new DbNotFoundException(HttpStatus.BAD_REQUEST.getReasonPhrase(), "User not found"));
     }
 
     @Bean

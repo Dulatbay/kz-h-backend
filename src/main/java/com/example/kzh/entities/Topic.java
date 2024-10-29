@@ -3,14 +3,16 @@ package com.example.kzh.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.HashSet;
 import java.util.Set;
 
 
+@Setter
+@Getter
 @Entity
-@Data
-@EqualsAndHashCode(callSuper = false)
 @Table(name = "topic")
 public class Topic extends AbstractEntity<Long> {
 

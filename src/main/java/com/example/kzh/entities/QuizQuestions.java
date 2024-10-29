@@ -1,20 +1,22 @@
 package com.example.kzh.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
-@EqualsAndHashCode(callSuper = false)
+@Setter
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@Data
-@Table(name = "quiz_questions")
+@Table(name = "quiz_questions", uniqueConstraints = {@UniqueConstraint(columnNames = {"quiz_id", "question_id"})})
 public class QuizQuestions extends AbstractEntity<Long> {
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "quiz_id", nullable = false)
     private Quiz quiz;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "question_id", nullable = false)
     private Question question;
 

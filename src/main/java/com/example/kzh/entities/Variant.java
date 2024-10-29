@@ -1,15 +1,17 @@
 package com.example.kzh.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.util.Set;
 
+@Setter
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@Data
-@EqualsAndHashCode(callSuper = false)
 @Table(name = "variant")
 public class Variant extends AbstractEntity<Long> {
 

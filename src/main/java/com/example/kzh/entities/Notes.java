@@ -3,10 +3,12 @@ package com.example.kzh.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
-@EqualsAndHashCode(callSuper = false)
+@Setter
+@Getter
 @Entity
-@Data
 @Table(name = "notes")
 public class Notes extends AbstractEntity<Long> {
 

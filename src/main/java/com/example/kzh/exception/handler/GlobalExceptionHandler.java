@@ -6,6 +6,7 @@ import com.example.kzh.exception.DbNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -37,6 +38,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(IllegalArgumentException ex) {
         log.error("IllegalArgumentException exception: ", ex);
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(UsernameNotFoundException ex) {
+        log.error("UsernameNotFoundException exception: ", ex);
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.BAD_REQUEST.getReasonPhrase(),
                 ex.getMessage()
