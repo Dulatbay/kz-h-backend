@@ -3,14 +3,23 @@ package com.example.kzh.entities;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Set;
+
+@Getter
 @RequiredArgsConstructor
 public enum Permission {
 
-    ADMIN_READ("admin:read"),
-    ADMIN_UPDATE("admin:update"),
-    ADMIN_CREATE("admin:create"),
-    ADMIN_DELETE("admin:delete");
+    QUIZ_READ("quiz:read"),
+    QUIZ_UPDATE("quiz:update"),
+    QUIZ_DELETE("quiz:update"),
+    QUIZ_CREATE("quiz:create");
 
-    @Getter
     private final String permission;
+
+    public static final Set<Permission> QUIZ_PERMISSIONS = Set.of(
+            QUIZ_UPDATE,
+            QUIZ_DELETE,
+            QUIZ_CREATE,
+            QUIZ_READ
+    );
 }
