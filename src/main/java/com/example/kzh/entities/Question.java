@@ -12,16 +12,16 @@ import java.util.Set;
 @Table(name = "question")
 public class Question extends AbstractEntity<Long> {
 
-    @Column(name = "content")
+    @Column(name = "content", nullable = false)
     private String content;
 
     @Column(name = "has_image")
     private boolean hasImage;
 
-    @Column(name = "correct_variant_index")
+    @Column(name = "correct_variant_index", nullable = false)
     private int correctVariantIndex;
 
-    @Column(name = "level")
+    @Column(name = "level", nullable = false)
     private int level;
 
     @Column(name = "is_verified")
@@ -30,11 +30,11 @@ public class Question extends AbstractEntity<Long> {
     @Column(name = "has_term")
     private boolean hasTerm;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id")
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "topic_id")
     private Topic topic;
 

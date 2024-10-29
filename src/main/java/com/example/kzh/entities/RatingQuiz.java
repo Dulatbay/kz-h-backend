@@ -10,11 +10,11 @@ import lombok.EqualsAndHashCode;
 @Table(name = "rating_quiz")
 public class RatingQuiz extends AbstractEntity<Long> {
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", nullable = false)
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quiz_id", nullable = false)
     private Quiz quiz;
 

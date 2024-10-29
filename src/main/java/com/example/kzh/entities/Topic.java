@@ -14,14 +14,14 @@ import java.util.Set;
 @Table(name = "topic")
 public class Topic extends AbstractEntity<Long> {
 
-    @ManyToOne
-    @JoinColumn(name = "module_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "module_id", nullable = false)
     private Module module;
 
     @Column(name = "title", unique = true)
     private String title;
 
-    @Column(name = "number")
+    @Column(name = "number", nullable = false)
     private int number;
 
     @Column(name = "percentage")
