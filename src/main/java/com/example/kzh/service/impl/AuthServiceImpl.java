@@ -1,17 +1,16 @@
 package com.example.kzh.service.impl;
 
-import com.example.kzh.dto.request.AuthRequestDto;
+import com.example.kzh.dto.request.AuthRequest;
 import com.example.kzh.dto.request.RegisterUserRequestDto;
-import com.example.kzh.dto.response.AuthResponseDto;
+import com.example.kzh.dto.response.AuthResponse;
 import com.example.kzh.entities.Token;
 import com.example.kzh.entities.User;
 import com.example.kzh.entities.enums.Role;
 import com.example.kzh.entities.enums.TokenType;
-import com.example.kzh.exception.DbRowNotFoundException;
+import com.example.kzh.exception.DbNotFoundException;
 import com.example.kzh.repositories.TokenRepository;
 import com.example.kzh.repositories.UserRepository;
 import com.example.kzh.security.JwtService;
-import com.example.kzh.security.UserPrincipal;
 import com.example.kzh.service.AuthService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,11 +19,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 
 
 @Service
@@ -36,6 +37,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final TokenRepository tokenRepository;
     private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
 
     @Override
     public void registerUser(RegisterUserRequestDto registerUserRequestDto) {
@@ -60,23 +62,24 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public AuthResponseDto authenticateUser(AuthRequestDto authRequest) {
+    public AuthResponse authenticateUser(AuthRequest authRequest) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        authRequest.getEmail(),
+                        authRequest.getPassword()
+                )
+        );
+
         User user = userRepository.findUserByEmail(authRequest.getEmail())
-                .orElseThrow(() -> new DbRowNotFoundException(HttpStatus.BAD_REQUEST.getReasonPhrase(), "User doesn't exist"));
+                .orElseThrow(() -> new DbNotFoundException(HttpStatus.BAD_REQUEST.getReasonPhrase(), "User doesn't exist"));
 
-        if(!passwordEncoder.matches(authRequest.getPassword(), user.getPassword())){
-            throw new IllegalArgumentException("Passwords do not match");
-        }
-
-        UserDetails userDetails = new UserPrincipal(user);
-
-        String accessToken = jwtService.generateToken(userDetails);
-        String refreshToken = jwtService.generateRefreshToken(userDetails);
+        String accessToken = jwtService.generateToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
 
         revokeAllUserTokens(user);
         saveUserToken(user, accessToken);
 
-        return AuthResponseDto.builder()
+        return AuthResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();
@@ -123,15 +126,14 @@ public class AuthServiceImpl implements AuthService {
         if (userEmail != null) {
 
             var user = userRepository.findUserByEmail(userEmail)
-                    .orElseThrow(() -> new DbRowNotFoundException(HttpStatus.BAD_REQUEST.getReasonPhrase(), "Token is invalid"));
+                    .orElseThrow(() -> new DbNotFoundException(HttpStatus.BAD_REQUEST.getReasonPhrase(), "Token is invalid"));
 
-            UserDetails userDetails = new UserPrincipal(user);
 
-            if (jwtService.isTokenValid(refreshToken, userDetails)) {
-                var accessToken = jwtService.generateToken(userDetails);
+            if (jwtService.isTokenValid(refreshToken, user)) {
+                var accessToken = jwtService.generateToken(user);
                 revokeAllUserTokens(user);
                 saveUserToken(user, accessToken);
-                var authResponse = AuthResponseDto.builder()
+                var authResponse = AuthResponse.builder()
                         .accessToken(accessToken)
                         .refreshToken(refreshToken)
                         .build();

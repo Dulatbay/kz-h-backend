@@ -4,6 +4,7 @@ import com.example.kzh.config.converters.LocalDateTimeAttributeConverter;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -28,7 +29,9 @@ public abstract class AbstractEntity<T extends Serializable> {
     private LocalDateTime updatedAt;
 
     @Column(name = "is_deleted", nullable = false)
-    private boolean isDeleted = false;
+    @ColumnDefault("false")
+    private boolean isDeleted;
+
     @PrePersist
     protected void onCreate() {
         this.updatedAt = this.createdAt = LocalDateTime.now(ZONE_ID);
@@ -37,15 +40,5 @@ public abstract class AbstractEntity<T extends Serializable> {
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now(ZONE_ID);
-    }
-
-    // todo: rewrite isDeleted method if it is necessary
-
-    public void delete() {
-        this.isDeleted = true;
-    }
-
-    public boolean isDeleted() {
-        return this.isDeleted;
     }
 }

@@ -30,9 +30,7 @@ public class Notes extends AbstractEntity<Long> {
     @Column(name = "end_index", nullable = false)
     private int endIndex;
 
-    @Column(name = "hex_color", nullable = true)
+    @Column(name = "hex_color")
     private String hexColor;
-
-
 }
 
