@@ -24,6 +24,9 @@ public class Quiz extends AbstractEntity<Long> {
     @Column(name = "is_verified", nullable = false)
     private boolean isVerified;
 
+    @Column(name = "show_questions", nullable = false)
+    private boolean showQuestions;
+
     @Column(name = "duration", nullable = false)
     private int duration;
 
@@ -43,8 +46,5 @@ public class Quiz extends AbstractEntity<Long> {
 
     @OneToMany(mappedBy = "quiz", fetch = FetchType.LAZY)
     private Set<PassedQuiz> passedQuizzes;
-
-
-
 }
 

@@ -18,8 +18,9 @@ public class Question extends AbstractEntity<Long> {
     @Column(name = "has_image")
     private boolean hasImage;
 
-    @Column(name = "correct_variant_index", nullable = false)
-    private int correctVariantIndex;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "correct_variant_id", nullable = false)
+    private Variant correctVariant;
 
     @Column(name = "level", nullable = false)
     private int level;
