@@ -6,10 +6,7 @@ import com.example.kzh.dto.response.QuizByIdResponse;
 import com.example.kzh.dto.response.QuizResponse;
 import com.example.kzh.entities.*;
 import com.example.kzh.exception.DbNotFoundException;
-import com.example.kzh.repositories.QuestionRepository;
-import com.example.kzh.repositories.QuizRepository;
-import com.example.kzh.repositories.UserRepository;
-import com.example.kzh.repositories.VariantRepository;
+import com.example.kzh.repositories.*;
 import com.example.kzh.service.QuizService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +20,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +29,7 @@ public class QuizServiceImpl implements QuizService {
     private final QuizRepository quizRepository;
     private final QuestionRepository questionRepository;
     private final VariantRepository variantRepository;
+    private final QuizQuestionsRepository quizQuestionsRepository;
 
 
     @Override
@@ -126,17 +123,16 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public QuizByIdResponse getQuizById(Long id) {
-        List<Question> questions= questionRepository.findByQuizId(id);
-        Quiz quiz = quizRepository.getById(id);
+        List<QuizQuestions> quizQuestions = quizQuestionsRepository.findQuizQuestionsByQuizId(id);
+        Optional<Quiz> quiz = quizRepository.findById(id);
+        List<String> questionsTexts = quizQuestions.stream().map(quizQuestion -> quizQuestion.getQuestion().getQuestionText()).toList();
         QuizByIdResponse quizByIdResponse = new QuizByIdResponse();
-        quizByIdResponse.setDescription(quiz.getDescription());
+        quizByIdResponse.setDescription(quiz.get().getDescription());
+        quizByIdResponse.setQuestionsCount(questionsTexts.size());
+        quizByIdResponse.setTitle(quiz.get().getTitle());
         quizByIdResponse.setQuestions(new ArrayList<>());
-        List<String> questionsText = questions.stream()
-                .map(Question::getQuestionText)
-                .toList();
-        if(quiz.isShowQuestions())
-            quizByIdResponse.setQuestions(questionsText);
-        quizByIdResponse.setQuestionsCount(questionsText.size());
+        if(quiz.get().isShowQuestions())
+            quizByIdResponse.setQuestions(questionsTexts);
         return quizByIdResponse;
     }
 
