@@ -29,10 +29,5 @@ public class DetailUser extends AbstractEntity<Long> {
 
     @Column(name = "image_url")
     private String imageUrl;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "last_topic_id")
-    private Topic lastTopic;
-
 }
 
