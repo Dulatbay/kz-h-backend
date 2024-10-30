@@ -9,9 +9,15 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ModulesResponse {
+public class ModuleResponse {
     private Long moduleId;
     private String moduleName;
-    private List<Long> topicId;
-    private List<String> topicName;
+    private List<TopicResponse> topics;
+
+    @AllArgsConstructor
+    @Data
+    public static class TopicResponse {
+        private Long topicId;
+        private String topicName;
+    }
 }

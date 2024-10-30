@@ -11,7 +11,7 @@ public enum Permission {
 
     QUIZ_READ("quiz:read"),
     QUIZ_UPDATE("quiz:update"),
-    QUIZ_DELETE("quiz:update"),
+    QUIZ_DELETE("quiz:delete"),
     QUIZ_CREATE("quiz:create");
 
     private final String permission;

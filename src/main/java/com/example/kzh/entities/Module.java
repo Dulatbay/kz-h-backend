@@ -19,7 +19,7 @@ public class Module extends AbstractEntity<Long> {
     @Column(name = "title", unique = true)
     private String title;
 
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "text")
     private String description;
 
     @Column(name = "level")

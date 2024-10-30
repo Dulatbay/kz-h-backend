@@ -18,3 +18,5 @@ CREATE TRIGGER update_quiz_level_trigger
     FOR EACH ROW
 EXECUTE FUNCTION update_quiz_level();
 
+
+

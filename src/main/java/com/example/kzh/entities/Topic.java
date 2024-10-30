@@ -26,9 +26,6 @@ public class Topic extends AbstractEntity<Long> {
     @Column(name = "number", nullable = false)
     private int number;
 
-    @Column(name = "percentage")
-    private double percentage;
-
     @OneToMany(mappedBy = "topic", fetch = FetchType.LAZY)
     private Set<Question> questions = new HashSet<>();
 
@@ -37,14 +34,6 @@ public class Topic extends AbstractEntity<Long> {
 
     @OneToMany(mappedBy = "topic", fetch = FetchType.LAZY)
     private Set<Term> terms;
-
-    @OneToOne(mappedBy = "lastTopic",
-            fetch = FetchType.LAZY,
-            orphanRemoval = true,
-            cascade = CascadeType.ALL,
-            optional = false)
-    private DetailUser detailUser;
-
 }
 
 

@@ -1,6 +1,6 @@
 package com.example.kzh.controller;
 
-import com.example.kzh.dto.response.ModulesResponse;
+import com.example.kzh.dto.response.ModuleResponse;
 import com.example.kzh.service.ModuleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,8 +19,8 @@ public class ModuleController {
 
     private final ModuleService moduleService;
 
-    @GetMapping("/detail")
-    public ResponseEntity<List<ModulesResponse>> getAllTopicWithModules(){
+    @GetMapping()
+    public ResponseEntity<List<ModuleResponse>> getAllTopicWithModules(){
         return ResponseEntity.ok(moduleService.getModulesAndTheirTopics());
     }
 }
