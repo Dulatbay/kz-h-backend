@@ -2,6 +2,7 @@ package com.example.kzh.service.impl;
 
 import com.example.kzh.dto.params.QuizParams;
 import com.example.kzh.dto.request.QuizCreateRequest;
+import com.example.kzh.dto.response.QuizByIdResponse;
 import com.example.kzh.dto.response.QuizResponse;
 import com.example.kzh.entities.*;
 import com.example.kzh.exception.DbNotFoundException;
@@ -18,7 +19,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -118,5 +123,23 @@ public class QuizServiceImpl implements QuizService {
 
         quizRepository.save(quiz);
     }
+
+    @Override
+    public QuizByIdResponse getQuizById(Long id) {
+        List<Question> questions= questionRepository.findByQuizId(id);
+        Quiz quiz = quizRepository.getById(id);
+        QuizByIdResponse quizByIdResponse = new QuizByIdResponse();
+        quizByIdResponse.setDescription(quiz.getDescription());
+        quizByIdResponse.setQuestions(new ArrayList<>());
+        List<String> questionsText = questions.stream()
+                .map(Question::getQuestionText)
+                .toList();
+        if(quiz.isShowQuestions())
+            quizByIdResponse.setQuestions(questionsText);
+        quizByIdResponse.setQuestionsCount(questionsText.size());
+        return quizByIdResponse;
+    }
+
+
 }
 

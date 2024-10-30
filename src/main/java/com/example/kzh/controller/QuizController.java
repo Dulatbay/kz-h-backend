@@ -4,7 +4,9 @@ import com.example.kzh.constants.Utils;
 import com.example.kzh.dto.params.QuizParams;
 import com.example.kzh.dto.request.QuizCreateRequest;
 import com.example.kzh.dto.response.PaginatedResponse;
+import com.example.kzh.dto.response.QuizByIdResponse;
 import com.example.kzh.dto.response.QuizResponse;
+import com.example.kzh.entities.Quiz;
 import com.example.kzh.service.QuizService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -40,5 +42,10 @@ public class QuizController {
         quizService.create(quizCreateRequest, userDetails);
 
         return ResponseEntity.status(201).build();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<QuizByIdResponse> getQuizById(@PathVariable Long id){
+        return ResponseEntity.ok(quizService.getQuizById(id));
     }
 }
