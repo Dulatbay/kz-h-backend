@@ -1,6 +1,7 @@
 package com.example.kzh.service.impl;
 
 import com.example.kzh.dto.params.QuizParams;
+import com.example.kzh.dto.params.QuizRandomParams;
 import com.example.kzh.dto.request.QuizCreateRequest;
 import com.example.kzh.dto.response.QuizByIdResponse;
 import com.example.kzh.dto.response.QuizResponse;
@@ -16,10 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -136,6 +134,22 @@ public class QuizServiceImpl implements QuizService {
         return quizByIdResponse;
     }
 
+    @Override
+    public QuizByIdResponse getRandomQuiz() {
+        QuizRandomParams quizRandomParams = quizRepository.findRandomQuiz();
+        Long id = getRandomNumber(quizRandomParams.getMinId(), quizRandomParams.getMaxId());
+        Quiz quiz = quizRepository.findById(id).get();
+        while(quiz.equals(null)){
+            id = getRandomNumber(quizRandomParams.getMinId(), quizRandomParams.getMaxId());
+            quiz = quizRepository.findById(id).get();
+        }
+        return getQuizById(id);
+    }
 
+
+    public Long getRandomNumber(Long min, Long max){
+        Random random = new Random();
+        return min + (long) (random.nextDouble() * (max - min + 1));
+    }
 }
 

@@ -1,5 +1,6 @@
 package com.example.kzh.repositories;
 
+import com.example.kzh.dto.params.QuizRandomParams;
 import com.example.kzh.dto.response.QuizResponse;
 import com.example.kzh.entities.Quiz;
 import org.springframework.data.domain.Page;
@@ -31,4 +32,12 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
                        AND (:difficulty IS NULL OR (:difficulty = CAST(COALESCE(CEIL(AVG(passed_q.average)), 0) AS integer)))
             """)
     Page<QuizResponse> findAllByFilters(Long userId, String searchText, Boolean status, Integer difficulty, List<Long> topics, Pageable pageable);
+
+    @Query(value = """
+                SELECT new com.example.kzh.dto.params.QuizRandomParams(
+                max(q.id) AS maxId,
+                min(q.id) AS minId)
+                FROM Quiz q
+            """)
+    QuizRandomParams findRandomQuiz();
 }

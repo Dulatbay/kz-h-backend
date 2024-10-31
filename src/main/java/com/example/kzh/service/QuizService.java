@@ -4,6 +4,7 @@ import com.example.kzh.dto.params.QuizParams;
 import com.example.kzh.dto.request.QuizCreateRequest;
 import com.example.kzh.dto.response.QuizByIdResponse;
 import com.example.kzh.dto.response.QuizResponse;
+import com.example.kzh.entities.Quiz;
 import com.example.kzh.entities.User;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,5 +18,7 @@ public interface QuizService {
     void create(QuizCreateRequest quizCreateRequest, User user);
 
     QuizByIdResponse getQuizById(Long id);
+
+    QuizByIdResponse getRandomQuiz();
 }
 
