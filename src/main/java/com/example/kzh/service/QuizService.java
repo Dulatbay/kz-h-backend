@@ -2,6 +2,7 @@ package com.example.kzh.service;
 
 import com.example.kzh.dto.params.QuizParams;
 import com.example.kzh.dto.request.QuizCreateRequest;
+import com.example.kzh.dto.response.QuizByIdResponse;
 import com.example.kzh.dto.response.QuizResponse;
 import com.example.kzh.entities.User;
 import org.springframework.data.domain.Page;
@@ -14,5 +15,7 @@ public interface QuizService {
     Page<QuizResponse> getQuizzes(QuizParams request, User user);
 
     void create(QuizCreateRequest quizCreateRequest, User user);
+
+    QuizByIdResponse getQuizById(Long id);
 }
 
