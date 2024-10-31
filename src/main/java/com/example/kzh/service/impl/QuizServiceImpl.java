@@ -136,11 +136,12 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public QuizByIdResponse getRandomQuiz() {
-        QuizRandomParams quizRandomParams = quizRepository.findRandomQuiz();
-        Long id = getRandomNumber(quizRandomParams.getMinId(), quizRandomParams.getMaxId());
+        Long max = quizRepository.findTopByOrderById().getId();
+        Long min = quizRepository.findTopByOrderByIdDesc().getId();
+        Long id = getRandomNumber(min, max);
         Quiz quiz = quizRepository.findById(id).get();
         while(quiz.equals(null)){
-            id = getRandomNumber(quizRandomParams.getMinId(), quizRandomParams.getMaxId());
+            id = getRandomNumber(min, max);
             quiz = quizRepository.findById(id).get();
         }
         return getQuizById(id);
