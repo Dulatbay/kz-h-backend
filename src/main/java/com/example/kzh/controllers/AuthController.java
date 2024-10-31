@@ -1,10 +1,10 @@
-package com.example.kzh.controller;
+package com.example.kzh.controllers;
 
 
 import com.example.kzh.dto.request.AuthRequest;
 import com.example.kzh.dto.request.RegisterUserRequestDto;
 import com.example.kzh.dto.response.AuthResponse;
-import com.example.kzh.service.AuthService;
+import com.example.kzh.services.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;

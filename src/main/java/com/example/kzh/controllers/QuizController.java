@@ -1,4 +1,4 @@
-package com.example.kzh.controller;
+package com.example.kzh.controllers;
 
 import com.example.kzh.constants.Utils;
 import com.example.kzh.dto.params.QuizParams;
@@ -6,8 +6,7 @@ import com.example.kzh.dto.request.QuizCreateRequest;
 import com.example.kzh.dto.response.PaginatedResponse;
 import com.example.kzh.dto.response.QuizByIdResponse;
 import com.example.kzh.dto.response.QuizResponse;
-import com.example.kzh.entities.Quiz;
-import com.example.kzh.service.QuizService;
+import com.example.kzh.services.QuizService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +26,7 @@ public class QuizController {
 
     @GetMapping
     public ResponseEntity<PaginatedResponse<QuizResponse>> getQuizzes(@ModelAttribute @Valid QuizParams quizParams) {
-        var userDetails = Utils.getUserDetails();
+        var userDetails = Utils.getCurrentUser();
 
         Page<QuizResponse> quizResponseDtos = quizService.getQuizzes(quizParams, userDetails);
 
@@ -36,10 +35,10 @@ public class QuizController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('quiz:create')")
-    public ResponseEntity<Void> createQuiz(@RequestBody @Valid QuizCreateRequest quizCreateRequest) {
-        var userDetails = Utils.getUserDetails();
+    public ResponseEntity<Void> createQuiz(@RequestBody QuizCreateRequest quizCreateRequest) {
+        var currentUser = Utils.getCurrentUser();
 
-        quizService.create(quizCreateRequest, userDetails);
+        quizService.create(quizCreateRequest, currentUser);
 
         return ResponseEntity.status(201).build();
     }

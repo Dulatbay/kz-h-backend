@@ -1,4 +1,4 @@
-package com.example.kzh.service.impl;
+package com.example.kzh.services.impl;
 
 import com.example.kzh.dto.request.AuthRequest;
 import com.example.kzh.dto.request.RegisterUserRequestDto;
@@ -7,11 +7,11 @@ import com.example.kzh.entities.Token;
 import com.example.kzh.entities.User;
 import com.example.kzh.entities.enums.Role;
 import com.example.kzh.entities.enums.TokenType;
-import com.example.kzh.exception.DbNotFoundException;
+import com.example.kzh.exceptions.DbNotFoundException;
 import com.example.kzh.repositories.TokenRepository;
 import com.example.kzh.repositories.UserRepository;
 import com.example.kzh.security.JwtService;
-import com.example.kzh.service.AuthService;
+import com.example.kzh.services.AuthService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,7 +25,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.List;
 
 
 @Service

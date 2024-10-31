@@ -21,7 +21,7 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
                                CAST(q.level AS integer) ,
                                COALESCE(count(qq), 0))
                     FROM Quiz q
-                         LEFT JOIN QuizQuestions qq ON qq.quiz.id = q.id
+                         LEFT JOIN QuizQuestion qq ON qq.quiz.id = q.id
                          LEFT JOIN PassedQuiz passed_q
                                    ON q.id = passed_q.quiz.id AND (:userId IS NULL OR passed_q.user.id = :userId)
                          LEFT JOIN Question ques ON ques.id = qq.question.id AND (:topics IS NULL OR ques.id IN :topics)

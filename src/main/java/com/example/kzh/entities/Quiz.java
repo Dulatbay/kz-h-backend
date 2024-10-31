@@ -1,8 +1,10 @@
 package com.example.kzh.entities;
 
+import com.example.kzh.entities.enums.Language;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Setter
@@ -20,17 +22,14 @@ public class Quiz extends AbstractEntity<Long> {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(name = "has_image", nullable = false)
-    private boolean hasImage;
-
     @Column(name = "is_verified", nullable = false)
     private boolean isVerified;
 
     @Column(name = "show_questions", nullable = false)
     private boolean showQuestions;
 
-    @Column(name = "duration", nullable = false)
-    private int duration;
+    @Column(name = "language")
+    private Language language;
 
     // todo: trigger
     @Column(name = "level", nullable = false)
@@ -44,7 +43,7 @@ public class Quiz extends AbstractEntity<Long> {
     private Set<RatingQuiz> ratingQuizzes;
 
     @OneToMany(mappedBy = "quiz", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<QuizQuestions> quizQuestions;
+    private Set<QuizQuestion> quizQuestions = new HashSet<>();
 
     @OneToMany(mappedBy = "quiz", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<PassedQuiz> passedQuizzes;

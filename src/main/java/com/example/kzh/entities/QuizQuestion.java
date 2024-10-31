@@ -9,8 +9,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "quiz_questions", uniqueConstraints = {@UniqueConstraint(columnNames = {"quiz_id", "question_id"})})
-public class QuizQuestions extends AbstractEntity<Long> {
+@Table(name = "quiz_question", uniqueConstraints = {@UniqueConstraint(columnNames = {"quiz_id", "question_id"})})
+public class QuizQuestion extends AbstractEntity<Long> {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "quiz_id", nullable = false)
