@@ -123,16 +123,21 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public QuizByIdResponse getQuizById(Long id) {
+        Quiz quiz = quizRepository.findById(id)
+                .orElseThrow(() -> new DbNotFoundException(HttpStatus.NOT_FOUND.getReasonPhrase(), "Quiz not found"));
+
         List<QuizQuestions> quizQuestions = quizQuestionsRepository.findQuizQuestionsByQuizId(id);
-        Optional<Quiz> quiz = quizRepository.findById(id);
-        List<String> questionsTexts = quizQuestions.stream().map(quizQuestion -> quizQuestion.getQuestion().getQuestionText()).toList();
+
         QuizByIdResponse quizByIdResponse = new QuizByIdResponse();
-        quizByIdResponse.setDescription(quiz.get().getDescription());
-        quizByIdResponse.setQuestionsCount(questionsTexts.size());
-        quizByIdResponse.setTitle(quiz.get().getTitle());
-        quizByIdResponse.setQuestions(new ArrayList<>());
-        if(quiz.get().isShowQuestions())
+        quizByIdResponse.setDescription(quiz.getDescription());
+        quizByIdResponse.setQuestionsCount(quizQuestions.size());
+        quizByIdResponse.setTitle(quiz.getTitle());
+
+        if(quiz.isShowQuestions()){
+            List<String> questionsTexts = quizQuestions.stream().map(quizQuestion -> quizQuestion.getQuestion().getQuestionText()).toList();
             quizByIdResponse.setQuestions(questionsTexts);
+        }
+
         return quizByIdResponse;
     }
 
