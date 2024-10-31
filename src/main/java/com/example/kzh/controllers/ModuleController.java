@@ -1,7 +1,7 @@
-package com.example.kzh.controller;
+package com.example.kzh.controllers;
 
 import com.example.kzh.dto.response.ModuleResponse;
-import com.example.kzh.service.ModuleService;
+import com.example.kzh.services.ModuleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

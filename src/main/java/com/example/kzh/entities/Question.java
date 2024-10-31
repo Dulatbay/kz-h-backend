@@ -19,9 +19,8 @@ public class Question extends AbstractEntity<Long> {
     @Column(name = "has_image")
     private boolean hasImage;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "correct_variant_id", nullable = false)
-    private Variant correctVariant;
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<QuestionCorrectVariant> questionCorrectVariant;
 
     @Column(name = "level", nullable = false)
     private int level;
@@ -58,12 +57,12 @@ public class Question extends AbstractEntity<Long> {
     @OneToMany(mappedBy = "question",
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL)
-    private Set<QuizQuestions> questions;
+    private Set<QuizQuestion> questions;
 
     @OneToMany(mappedBy = "question",
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL)
-    private Set<QuestionVariant> questionVariants;
+    private Set<Variant> variants;
 
 }
 

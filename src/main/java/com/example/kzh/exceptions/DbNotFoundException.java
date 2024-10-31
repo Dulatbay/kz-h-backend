@@ -1,4 +1,4 @@
-package com.example.kzh.exception;
+package com.example.kzh.exceptions;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

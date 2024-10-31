@@ -1,8 +1,9 @@
-package com.example.kzh.exception.handler;
+package com.example.kzh.exceptions.handler;
 
 
 import com.example.kzh.dto.response.ErrorResponse;
-import com.example.kzh.exception.DbNotFoundException;
+import com.example.kzh.exceptions.DbNotFoundException;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +42,16 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.BAD_REQUEST.getReasonPhrase(),
                 ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(ConstraintViolationException ex) {
+        log.error("ConstraintViolationException exception: ", ex);
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                ex.getConstraintViolations().stream().findFirst().get().getMessage()
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }

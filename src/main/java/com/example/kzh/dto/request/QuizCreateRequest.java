@@ -1,5 +1,6 @@
 package com.example.kzh.dto.request;
 
+import com.example.kzh.entities.enums.Language;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -20,20 +21,25 @@ public class QuizCreateRequest {
     private String description;
     private boolean showQuestions;
 
+    @NotNull
+    private Language language;
+
     @Size(min = 2)
     private List<@Valid QuestionCreateRequest> questionCreateRequests = new ArrayList<>();
-
 
     public static class QuestionCreateRequest {
         public boolean isGenerated;
         public Long questionId;
         public String question;
+        public Long topicId;
 
         @NotNull
         public Integer level;
 
-        @NotBlank
-        public String correctAnswer;
+        @Size(min = 1)
+        @UniqueElements
+        @NotNull
+        public Set<@NotBlank String> correctAnswers;
 
         @Size(min = 2)
         @UniqueElements

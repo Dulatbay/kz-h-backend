@@ -1,4 +1,4 @@
-package com.example.kzh.service;
+package com.example.kzh.services;
 
 
 import com.example.kzh.dto.request.AuthRequest;
