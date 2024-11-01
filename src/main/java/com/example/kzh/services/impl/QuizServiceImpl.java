@@ -30,13 +30,12 @@ import java.util.stream.Collectors;
 @Slf4j
 @Validated
 public class QuizServiceImpl implements QuizService {
-
     private final QuizRepository quizRepository;
     private final QuestionRepository questionRepository;
-    private final QuizQuestionsRepository quizQuestionsRepository;
     private final QuizMapper quizMapper;
     private final QuestionMapper questionMapper;
     private final VariantMapper variantMapper;
+    private final QuizQuestionsRepository quizQuestionsRepository;
 
 
     @Override
@@ -110,24 +109,27 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public QuizByIdResponse getQuizById(Long id) {
-
         Quiz quiz = quizRepository.findById(id)
                 .orElseThrow(() -> new DbNotFoundException(HttpStatus.NOT_FOUND.getReasonPhrase(), "Quiz not found"));
 
-        List<QuizQuestion> quizQuestions = quizQuestionsRepository.findQuizQuestionsByQuizId(id);
+        List<Question> questions = questionRepository.findAllQuestionsByQuizId(id);
 
-        QuizByIdResponse quizByIdResponse = new QuizByIdResponse();
-        quizByIdResponse.setDescription(quiz.getDescription());
-        quizByIdResponse.setQuestionsCount(quizQuestions.size());
-        quizByIdResponse.setTitle(quiz.getTitle());
-
-        if (quiz.isShowQuestions()) {
-            List<String> questionsTexts = quizQuestions.stream().map(quizQuestion -> "").toList();
-            quizByIdResponse.setQuestions(questionsTexts);
-        }
-
-        return quizByIdResponse;
+        return quizMapper.mapFromEntityById(quiz, questions);
     }
+
+    @Override
+    public QuizByIdResponse getRandomQuiz() {
+        var randomQuiz = quizRepository.findRandomQuiz()
+                .orElseThrow(() -> new DbNotFoundException(HttpStatus.BAD_REQUEST.getReasonPhrase(), "Quiz not found"));
+        var questions = questionRepository.findAllQuestionsByQuizId(randomQuiz.getId());
+
+        return quizMapper.mapFromEntityById(randomQuiz, questions);
+
+
+    }
+
+
+
 
 
 }

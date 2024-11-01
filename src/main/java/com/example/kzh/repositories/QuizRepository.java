@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 
 public interface QuizRepository extends JpaRepository<Quiz, Long> {
@@ -31,4 +32,10 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
                        AND (:difficulty IS NULL OR (:difficulty = CAST(COALESCE(CEIL(AVG(passed_q.average)), 0) AS integer)))
             """)
     Page<QuizResponse> findAllByFilters(Long userId, String searchText, Boolean status, Integer difficulty, List<Long> topics, Pageable pageable);
+
+    @Query(value = """
+                SELECT * FROM quiz
+                ORDER BY RANDOM() LIMIT 1;
+            """, nativeQuery = true)
+    Optional<Quiz> findRandomQuiz();
 }

@@ -47,4 +47,9 @@ public class QuizController {
     public ResponseEntity<QuizByIdResponse> getQuizById(@PathVariable Long id){
         return ResponseEntity.ok(quizService.getQuizById(id));
     }
+
+    @GetMapping("/random-one")
+    public ResponseEntity<QuizByIdResponse> getRandomQuiz(){
+        return ResponseEntity.ok(quizService.getRandomQuiz());
+    }
 }
