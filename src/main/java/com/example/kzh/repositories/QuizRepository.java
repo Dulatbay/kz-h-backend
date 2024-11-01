@@ -1,6 +1,5 @@
 package com.example.kzh.repositories;
 
-import com.example.kzh.dto.params.QuizRandomParams;
 import com.example.kzh.dto.response.QuizResponse;
 import com.example.kzh.entities.Quiz;
 import org.springframework.data.domain.Page;
