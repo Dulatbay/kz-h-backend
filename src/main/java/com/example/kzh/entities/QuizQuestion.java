@@ -1,6 +1,7 @@
 package com.example.kzh.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 
 @Setter
@@ -20,4 +21,8 @@ public class QuizQuestion extends AbstractEntity<Long> {
     @JoinColumn(name = "question_id", nullable = false)
     private Question question;
 
+    @Column(name = "duration_in_seconds",nullable = false)
+    @Min(5)
+    @Min(300)
+    private Short durationInSeconds;
 }
