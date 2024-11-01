@@ -41,10 +41,9 @@ public class ControllerLoggingAspect {
     private String getCurrentRequestToken() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication instanceof JwtAuthenticationToken jwtToken) {
-            return jwtToken.getName();
-        }
+        if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal().equals("anonymousUser"))
+            return "Anonymous";
 
-        return "Anonymous";
+        return authentication.getName();
     }
 }

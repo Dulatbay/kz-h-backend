@@ -33,10 +33,8 @@ public class QuizServiceImpl implements QuizService {
 
     private final QuizRepository quizRepository;
     private final QuestionRepository questionRepository;
-    private final VariantRepository variantRepository;
     private final QuizQuestionsRepository quizQuestionsRepository;
     private final QuizMapper quizMapper;
-    private final TopicRepository topicRepository;
     private final QuestionMapper questionMapper;
     private final VariantMapper variantMapper;
 
