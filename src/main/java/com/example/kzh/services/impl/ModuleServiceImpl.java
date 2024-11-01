@@ -1,10 +1,10 @@
-package com.example.kzh.service.impl;
+package com.example.kzh.services.impl;
 
 import com.example.kzh.dto.response.ModuleResponse;
 import com.example.kzh.entities.Topic;
 import com.example.kzh.repositories.ModuleRepository;
 import com.example.kzh.repositories.TopicRepository;
-import com.example.kzh.service.ModuleService;
+import com.example.kzh.services.ModuleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;

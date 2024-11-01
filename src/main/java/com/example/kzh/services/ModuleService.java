@@ -1,4 +1,4 @@
-package com.example.kzh.service;
+package com.example.kzh.services;
 
 import com.example.kzh.dto.response.ModuleResponse;
 import org.springframework.stereotype.Service;
