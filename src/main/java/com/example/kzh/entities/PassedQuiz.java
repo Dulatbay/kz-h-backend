@@ -14,7 +14,6 @@ import java.util.Set;
 @Entity
 @Table(name = "passed_quiz")
 public class PassedQuiz extends AbstractEntity<Long> {
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

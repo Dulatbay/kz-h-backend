@@ -124,8 +124,6 @@ public class QuizServiceImpl implements QuizService {
         var questions = questionRepository.findAllQuestionsByQuizId(randomQuiz.getId());
 
         return quizMapper.mapFromEntityById(randomQuiz, questions);
-
-
     }
 
 

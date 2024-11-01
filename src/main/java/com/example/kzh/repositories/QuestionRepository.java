@@ -14,7 +14,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
             FROM quiz qz
             LEFT JOIN quiz_question qzqn ON qzqn.quiz_id = qz.id
             LEFT JOIN question q ON qzqn.question_id = q.id
-            WHERE qz.id = :id
+            WHERE qz.id = :id AND qz.is_deleted = false AND q.is_deleted = false
             """, nativeQuery = true)
     List<Question> findAllQuestionsByQuizId(@Param("id") Long id);
 }

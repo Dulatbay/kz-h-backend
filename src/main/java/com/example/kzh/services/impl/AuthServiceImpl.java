@@ -40,7 +40,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void registerUser(RegisterUserRequestDto registerUserRequestDto) {
-        userRepository.findUserByEmail(registerUserRequestDto.getEmail().trim())
+        userRepository.findUserByEmailAndDeletedIsFalse(registerUserRequestDto.getEmail().trim())
                 .ifPresent(usr -> {
                     throw new IllegalArgumentException("User with email "+ registerUserRequestDto.getEmail() + " already exists");
                 });
@@ -69,7 +69,7 @@ public class AuthServiceImpl implements AuthService {
                 )
         );
 
-        User user = userRepository.findUserByEmail(authRequest.getEmail())
+        User user = userRepository.findUserByEmailAndDeletedIsFalse(authRequest.getEmail())
                 .orElseThrow(() -> new DbNotFoundException(HttpStatus.BAD_REQUEST.getReasonPhrase(), "User doesn't exist"));
 
         String accessToken = jwtService.generateToken(user);
@@ -124,7 +124,7 @@ public class AuthServiceImpl implements AuthService {
 
         if (userEmail != null) {
 
-            var user = userRepository.findUserByEmail(userEmail)
+            var user = userRepository.findUserByEmailAndDeletedIsFalse(userEmail)
                     .orElseThrow(() -> new DbNotFoundException(HttpStatus.BAD_REQUEST.getReasonPhrase(), "Token is invalid"));
 
 

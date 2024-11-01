@@ -13,6 +13,8 @@ import java.util.Optional;
 
 public interface QuizRepository extends JpaRepository<Quiz, Long> {
 
+
+    // todo: подключить поисковой движок
     @Query(value = """
                     SELECT new com.example.kzh.dto.response.QuizResponse(
                                q.id,
@@ -26,7 +28,8 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
                          LEFT JOIN PassedQuiz passed_q
                                    ON q.id = passed_q.quiz.id AND (:userId IS NULL OR passed_q.user.id = :userId)
                          LEFT JOIN Question ques ON ques.id = qq.question.id AND (:topics IS NULL OR ques.id IN :topics)
-                    WHERE (:searchText IS NULL OR (:searchText LIKE '%' || q.title || '%' OR :searchText LIKE '%' || q.description || '%'))
+                    WHERE (:searchText IS NULL OR (:searchText LIKE '%' || q.title || '%' OR :searchText LIKE '%' || q.description || '%')) 
+                    AND q.isDeleted = false AND q.isVerified = true
                     GROUP BY q.title, q.id
                     HAVING (:status IS NULL OR (:status = true AND count(passed_q) > 0))
                        AND (:difficulty IS NULL OR (:difficulty = CAST(COALESCE(CEIL(AVG(passed_q.average)), 0) AS integer)))
@@ -35,6 +38,7 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
 
     @Query(value = """
                 SELECT * FROM quiz
+                WHERE is_deleted = false AND is_verified = true
                 ORDER BY RANDOM() LIMIT 1;
             """, nativeQuery = true)
     Optional<Quiz> findRandomQuiz();

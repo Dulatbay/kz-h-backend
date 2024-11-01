@@ -48,7 +48,7 @@ public class QuizController {
         return ResponseEntity.ok(quizService.getQuizById(id));
     }
 
-    @GetMapping("/random-one")
+    @GetMapping("/random")
     public ResponseEntity<QuizByIdResponse> getRandomQuiz(){
         return ResponseEntity.ok(quizService.getRandomQuiz());
     }

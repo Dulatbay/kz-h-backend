@@ -2,6 +2,8 @@ package com.example.kzh.entities;
 
 import com.example.kzh.entities.enums.Language;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 
 import java.util.HashSet;
@@ -33,6 +35,8 @@ public class Quiz extends AbstractEntity<Long> {
 
     // todo: trigger
     @Column(name = "level", nullable = false)
+    @Min(value = 1, message = "Level must be more than 0")
+    @Max(value = 3, message = "Level must be smaller than 3")
     private double level;
 
     @ManyToOne(fetch = FetchType.LAZY)

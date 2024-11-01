@@ -1,6 +1,8 @@
 package com.example.kzh.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 
 import java.util.Set;
@@ -23,6 +25,8 @@ public class Question extends AbstractEntity<Long> {
     private Set<QuestionCorrectVariant> questionCorrectVariant;
 
     @Column(name = "level", nullable = false)
+    @Min(value = 1, message = "Level must be more than 0")
+    @Max(value = 3, message = "Level must be smaller than 3")
     private int level;
 
     @Column(name = "is_verified")

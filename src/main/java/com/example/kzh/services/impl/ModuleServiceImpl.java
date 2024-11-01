@@ -25,8 +25,8 @@ public class ModuleServiceImpl implements ModuleService {
     public List<ModuleResponse> getModulesAndTheirTopics() {
         List<ModuleResponse> result = new ArrayList<>();
 
-        var modules = moduleRepository.findAll(Sort.by("id"));
-        var topics = topicRepository.findAll(Sort.by("module_id"));
+        var modules = moduleRepository.findAllByDeletedIsFalse(Sort.by("id"));
+        var topics = topicRepository.findAllByDeletedIsFalse(Sort.by("module_id"));
 
         Map<Long, List<Topic>> topicsByModuleId = topics.stream()
                 .collect(Collectors.groupingBy(topic -> topic.getModule().getId()));
