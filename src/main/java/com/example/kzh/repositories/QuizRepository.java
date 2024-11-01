@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 
 public interface QuizRepository extends JpaRepository<Quiz, Long> {
@@ -34,10 +35,8 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
     Page<QuizResponse> findAllByFilters(Long userId, String searchText, Boolean status, Integer difficulty, List<Long> topics, Pageable pageable);
 
     @Query(value = """
-                SELECT new com.example.kzh.dto.params.QuizRandomParams(
-                max(q.id) AS maxId,
-                min(q.id) AS minId)
-                FROM Quiz q
-            """)
-    QuizRandomParams findRandomQuiz();
+                SELECT * FROM quiz
+                ORDER BY RANDOM() LIMIT 1;
+            """, nativeQuery = true)
+    Optional<Quiz> findRandomQuiz();
 }

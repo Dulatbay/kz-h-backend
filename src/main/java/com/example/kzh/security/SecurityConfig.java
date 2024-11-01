@@ -35,8 +35,6 @@ public class SecurityConfig {
             "/webjars/**",
             "/swagger-ui.html",
             "/actuator/prometheus",
-
-            "/auth/**",
             "/auth/**",
     };
 
@@ -50,7 +48,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(req ->
                         req
                                 .requestMatchers(WHITE_LIST_URL).permitAll()
-                                .anyRequest().authenticated()
+                                .anyRequest().permitAll()
                 )
 
                 .sessionManagement(config -> config.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
