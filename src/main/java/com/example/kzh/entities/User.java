@@ -1,64 +1,41 @@
 package com.example.kzh.entities;
 
+
 import com.example.kzh.entities.enums.Role;
-import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Set;
 
-@Setter
+@Document(collection  = "users")
+@Accessors
 @Getter
-@NoArgsConstructor
-@Entity
-@Table(name = "kzh_user")
-public class User extends AbstractEntity<Long> implements UserDetails {
+@Setter
+public class User implements UserDetails {
+    @MongoId(FieldType.OBJECT_ID)
+    private String id;
 
-    @Column(name = "first_name", nullable = false)
-    private String firstName;
+    @Indexed(unique = true)
+    private String username;
 
-    @Column(name = "last_name", nullable = false)
-    private String lastName;
-
-    @Column(name = "email", nullable = false, unique = true)
+    @Indexed(unique = true)
     private String email;
 
-    @Column(name = "password", nullable = false)
     private String password;
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private DetailUser detailUser;
-
-    @OneToMany(mappedBy = "user",
-            fetch = FetchType.LAZY)
-    private Set<Question> questions;
-
-    @OneToMany(mappedBy = "user",
-            fetch = FetchType.LAZY)
-    private Set<RatingQuiz> ratingQuizzes;
-
-    @OneToMany(mappedBy = "user",
-            fetch = FetchType.LAZY)
-    private Set<Quiz> quizzes;
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private Set<PassedQuiz> passedQuizzes;
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private Set<PassedQuestion> passedQuestions;
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private Set<Notes> notes;
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private Set<Variant> variants;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false)
+    @Indexed
+    @Field(targetType = FieldType.STRING)
     private Role role;
+
+    private LocalDateTime lastPlayedAt;
+
+    private String imageUrl;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -67,7 +44,7 @@ public class User extends AbstractEntity<Long> implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.email;
+        return this.username;
     }
 
     @Override

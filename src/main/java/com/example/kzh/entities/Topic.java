@@ -1,38 +1,31 @@
 package com.example.kzh.entities;
 
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.FieldType;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
-import java.util.HashSet;
-import java.util.Set;
-
-
-@Setter
+@Document(collection = "topics")
+@Accessors(chain = true)
 @Getter
-@Entity
-@Table(name = "topic")
-public class Topic extends AbstractEntity<Long> {
+@Setter
+public class Topic {
+    @MongoId(FieldType.OBJECT_ID)
+    private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "module_id", nullable = false)
-    private Module module;
-
-    @Column(name = "title", unique = true)
+    @Indexed(unique = true)
     private String title;
 
-    @Column(name = "number", nullable = false)
+    @Indexed
     private int number;
 
-    @OneToMany(mappedBy = "topic", fetch = FetchType.LAZY)
-    private Set<Question> questions = new HashSet<>();
+    @DBRef
+    private Module module;
 
-    @OneToMany(mappedBy = "topic", fetch = FetchType.LAZY)
-    private Set<Notes> notes = new HashSet<>();
-
-    @OneToMany(mappedBy = "topic", fetch = FetchType.LAZY)
-    private Set<Term> terms;
+    @DBRef
+    private User user;
 }
-
-
-

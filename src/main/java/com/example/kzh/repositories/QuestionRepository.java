@@ -1,20 +1,7 @@
 package com.example.kzh.repositories;
 
 import com.example.kzh.entities.Question;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-import java.util.List;
-
-
-public interface QuestionRepository extends JpaRepository<Question, Long> {
-    @Query(value = """
-            SELECT q.*
-            FROM quiz qz
-            LEFT JOIN quiz_question qzqn ON qzqn.quiz_id = qz.id
-            LEFT JOIN question q ON qzqn.question_id = q.id
-            WHERE qz.id = :id AND qz.is_deleted = false AND q.is_deleted = false
-            """, nativeQuery = true)
-    List<Question> findAllQuestionsByQuizId(@Param("id") Long id);
+public interface QuestionRepository extends MongoRepository<Question, String> {
 }

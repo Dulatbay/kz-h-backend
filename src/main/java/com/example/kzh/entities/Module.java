@@ -1,39 +1,35 @@
 package com.example.kzh.entities;
 
-import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.FieldType;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
-import java.util.HashSet;
 import java.util.Set;
 
-
+@Document(collation = "modules")
+@Accessors(chain = true)
 @Setter
 @Getter
-@Entity
-@Table(name = "module")
-public class Module extends AbstractEntity<Long> {
+public class Module {
+    @MongoId(FieldType.OBJECT_ID)
+    private String id;
 
-    @Column(name = "title", unique = true)
-    private String title;
-
-    @Column(name = "description", columnDefinition = "text")
-    private String description;
-
-    @Column(name = "level")
-    private int level;
-
-    @Column(name = "hours")
+    private String titleKaz;
+    private String titleRu;
+    private String descriptionKaz;
+    private String descriptionRu;
+    private String level;
     private int hours;
-
-    @Column(name = "number")
     private int number;
-
-    @Column(name = "image_url")
     private String imageUrl;
 
-    @OneToMany(mappedBy = "module", fetch = FetchType.LAZY)
-    private Set<Topic> topics = new HashSet<>();
+    @DBRef
+    private User user;
+
+    @DBRef
+    private Set<Topic> topics;
 }

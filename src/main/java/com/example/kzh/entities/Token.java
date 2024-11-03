@@ -1,31 +1,36 @@
 package com.example.kzh.entities;
 
 import com.example.kzh.entities.enums.TokenType;
-import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.Accessors;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.*;
 
+import java.time.LocalDateTime;
 
-@Setter
+@Document(collection = "tokens")
+@Accessors(chain = true)
 @Getter
+@Setter
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "token")
-public class Token extends AbstractEntity<Long> {
+@NoArgsConstructor
+public class Token {
 
-    @Column(unique = true)
-    public String token;
+    @MongoId(FieldType.OBJECT_ID)
+    private String id;
 
-    @Enumerated(EnumType.STRING)
-    public TokenType tokenType = TokenType.BEARER;
+    @Indexed(unique = true)
+    private String token;
 
-    public boolean revoked;
+    @Field(targetType = FieldType.STRING)
+    private TokenType tokenType;
 
-    public boolean expired;
+    private boolean revoked;
+    private boolean expired;
+    private LocalDateTime createdAt;
+    private LocalDateTime expiredAt;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id")
-    public User user;
-
+    @DBRef
+    private User user;
 }

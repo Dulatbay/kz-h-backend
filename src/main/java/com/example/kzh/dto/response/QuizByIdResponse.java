@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class QuizByIdResponse {
-    private Long id;
+    private String id;
     private String title;
     private String description;
     private List<String> questions;

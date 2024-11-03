@@ -11,12 +11,8 @@ import lombok.Data;
 public class RegisterUserRequestDto {
 
     @NotNull
-    @JsonProperty("firstname")
-    private String firstName;
-
-    @NotNull
-    @JsonProperty("lastname")
-    private String lastName;
+    @JsonProperty("username")
+    private String username;
 
     @Size(min = 5, message = "Password should have minimum 5 characters")
     @NotNull

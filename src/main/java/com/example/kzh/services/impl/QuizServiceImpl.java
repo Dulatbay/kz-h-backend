@@ -5,23 +5,33 @@ import com.example.kzh.dto.request.QuizCreateRequest;
 import com.example.kzh.dto.response.QuizByIdResponse;
 import com.example.kzh.dto.response.QuizResponse;
 import com.example.kzh.entities.*;
+import com.example.kzh.entities.helpers.QuizQuestion;
+import com.example.kzh.entities.helpers.Variant;
 import com.example.kzh.exceptions.DbNotFoundException;
-import com.example.kzh.mappers.QuestionMapper;
 import com.example.kzh.mappers.QuizMapper;
-import com.example.kzh.mappers.VariantMapper;
-import com.example.kzh.repositories.*;
+import com.example.kzh.repositories.QuestionRepository;
+import com.example.kzh.repositories.QuizRepository;
+import com.example.kzh.repositories.TopicRepository;
 import com.example.kzh.services.QuizService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.aggregation.SampleOperation;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -31,101 +41,122 @@ import java.util.stream.Collectors;
 @Slf4j
 @Validated
 public class QuizServiceImpl implements QuizService {
-    private final QuizRepository quizRepository;
-    private final QuestionRepository questionRepository;
-    private final QuizMapper quizMapper;
-    private final QuestionMapper questionMapper;
-    private final VariantMapper variantMapper;
-    private final QuizQuestionsRepository quizQuestionsRepository;
 
+    private final QuizRepository quizRepository;
+    private final QuizMapper quizMapper;
+    private final MongoTemplate mongoTemplate;
+    private final QuestionRepository questionRepository;
+    private final TopicRepository topicRepository;
 
     @Override
     public Page<QuizResponse> getQuizzes(QuizParams request, User user) {
-        PageRequest pageRequest = PageRequest.of(request.getPage(), request.getSize());
-        Long userId = null;
+        Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
+        Query query = new Query().with(pageable);
 
-        if (user != null) userId = user.getId();
+        if (request.getLevel() != null) {
+            query.addCriteria(Criteria.where("level").is(request.getLevel()));
+        }
 
-        return quizRepository.findAllByFilters(userId, request.getSearchText(), request.getStatus(), request.getDifficulty(), request.getTopics(), pageRequest);
+
+        if (request.getTopics() != null && !request.getTopics().isEmpty()) {
+            query.addCriteria(Criteria.where("topics").in(request.getTopics()));
+        }
+
+        if (request.getSearchText() != null && !request.getSearchText().isEmpty()) {
+            query.addCriteria(Criteria.where("title").regex(request.getSearchText(), "i"));
+        }
+
+        List<Quiz> quizzes = mongoTemplate.find(query, Quiz.class);
+        long count = mongoTemplate.count(query.skip(0).limit(0), Quiz.class);
+
+        List<QuizResponse> quizResponses = quizzes.stream()
+                .map(quizMapper::toQuizResponse)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(quizResponses, pageable, count);
     }
 
     @Override
     @Transactional
     public void create(@Valid QuizCreateRequest quizCreateRequest, User user) {
-        Quiz quiz = quizMapper.mapFromCreateRequest(quizCreateRequest, user);
+        Quiz quiz = quizMapper.toQuizEntity(quizCreateRequest);
+        quiz.setAuthor(user);
 
-        var quizQuestions = quizCreateRequest.getQuestionCreateRequests()
-                .stream()
-                .map(questionCreateRequest -> {
-                    var question = getQuestion(questionCreateRequest, user);
+        var questionToCreate = quizCreateRequest.getQuestionCreateRequests();
 
-                    QuizQuestion quizQuestion = new QuizQuestion();
-                    quizQuestion.setQuestion(question);
-                    quizQuestion.setQuiz(quiz);
-                    quizQuestion.setDurationInSeconds(questionCreateRequest.durationInSeconds);
+        questionToCreate.forEach(questionRequest -> {
+            var questionGenerateReq = questionRequest.getQuestionGenerate();
+            var questionCreateReq = questionRequest.getQuestionCreate();
 
-                    return quizQuestion;
-                })
-                .collect(Collectors.toSet());
+            boolean isGenerate = questionRequest.getQuestionGenerate() != null;
 
+            QuizQuestion quizQuestion;
+            if (isGenerate) {
+                var question = generateQuestion(questionGenerateReq);
+
+                quizQuestion = createQuizQuestion(question,
+                        questionGenerateReq.getVariants(),
+                        questionGenerateReq.getDurationInSeconds()
+                );
+            } else {
+                var question = createQuestion(questionCreateReq);
+
+                quizQuestion = createQuizQuestion(question,
+                        questionCreateReq.getVariants(),
+                        questionCreateReq.getDurationInSeconds());
+            }
+
+            quiz.getQuestionsWithDuration().add(quizQuestion);
+        });
 
         quizRepository.save(quiz);
-        quizQuestionsRepository.saveAll(quizQuestions);
+        log.info("Quiz created with ID: {}", quiz.getId());
     }
 
-    private Question getQuestion(QuizCreateRequest.QuestionCreateRequest questionToCreate, User user) {
-        if (questionToCreate.isGenerated) {
-            return questionRepository.findById(questionToCreate.questionId)
-                    .orElseThrow(() -> new DbNotFoundException(HttpStatus.BAD_REQUEST.getReasonPhrase(), "Question not found"));
-        }
-
-        var question = questionMapper.mapFromCreateRequest(questionToCreate, user);
-
-        var variants = questionToCreate.options
-                .stream()
-                .map(option -> variantMapper.mapFromCreateRequest(option, user))
-                .peek(variant -> variant.setQuestion(question))
-                .collect(Collectors.toSet());
+    private QuizQuestion createQuizQuestion(Question question, Set<Variant> variants, int duration) {
+        return new QuizQuestion(question, variants, duration);
+    }
 
 
-        Set<QuestionCorrectVariant> correctVariant = variants
-                .stream()
-                .filter(i -> questionToCreate.correctAnswers.contains(i.getContent()))
-                .map(i -> {
-                    QuestionCorrectVariant questionCorrectVariant = new QuestionCorrectVariant();
-                    questionCorrectVariant.setQuestion(question);
-                    questionCorrectVariant.setVariant(i);
-                    return questionCorrectVariant;
-                })
-                .collect(Collectors.toSet());
+    private Question generateQuestion(@Valid QuizCreateRequest.QuestionGenerate questionGenerate) {
+        var questionId = questionGenerate.getQuestionId();
 
-        if (correctVariant.isEmpty())
-            throw new IllegalArgumentException("Correct is incorrect");
+        return questionRepository.findById(questionId)
+                .orElseThrow(() -> new DbNotFoundException(HttpStatus.BAD_REQUEST.getReasonPhrase(), "Question not found"));
+    }
 
-        question.setQuestionCorrectVariant(correctVariant);
-
-        question.setVariants(variants);
-
-        return question;
+    private Question createQuestion(@Valid QuizCreateRequest.QuestionCreate questionCreate) {
+        Question question = new Question();
+        question.setContent(questionCreate.getQuestion());
+        question.setLevel(questionCreate.getLevel());
+        question.setTopics(topicRepository.findByIdIn(questionCreate.getTopicId()));
+        question.setVariants(questionCreate.getVariants());
+        question.setLanguage(question.getLanguage());
+        return questionRepository.save(question);
     }
 
     @Override
-    public QuizByIdResponse getQuizById(Long id) {
+    public QuizByIdResponse getQuizById(String id) {
         Quiz quiz = quizRepository.findById(id)
                 .orElseThrow(() -> new DbNotFoundException(HttpStatus.NOT_FOUND.getReasonPhrase(), "Quiz not found"));
-
-        List<Question> questions = questionRepository.findAllQuestionsByQuizId(id);
-
-        return quizMapper.mapFromEntityById(quiz, questions);
+        return quizMapper.toQuizByIdResponse(quiz);
     }
 
     @Override
     public QuizByIdResponse getRandomQuiz() {
-        var randomQuiz = quizRepository.findRandomQuiz()
-                .orElseThrow(() -> new DbNotFoundException(HttpStatus.BAD_REQUEST.getReasonPhrase(), "Quiz not found"));
-        var questions = questionRepository.findAllQuestionsByQuizId(randomQuiz.getId());
+        SampleOperation sampleStage = Aggregation.sample(1);
+        Aggregation aggregation = Aggregation.newAggregation(sampleStage);
 
-        return quizMapper.mapFromEntityById(randomQuiz, questions);
+        AggregationResults<Quiz> result = mongoTemplate.aggregate(aggregation, "quizzes", Quiz.class);
+        Quiz quiz = result.getUniqueMappedResult();
+
+        if (quiz == null) {
+            throw new DbNotFoundException(HttpStatus.NOT_FOUND.getReasonPhrase(), "No quizzes found");
+        }
+
+        return quizMapper.toQuizByIdResponse(quiz);
     }
+
+
 }
 

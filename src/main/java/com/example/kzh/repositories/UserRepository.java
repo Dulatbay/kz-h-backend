@@ -1,18 +1,11 @@
 package com.example.kzh.repositories;
 
 import com.example.kzh.entities.User;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;
 
-@Repository
-public interface UserRepository extends JpaRepository<User, Long> {
-    @Query(value = """
-            SELECT u.*
-            FROM kzh_user u
-            WHERE u.email = :email AND u.is_deleted = false
-            """, nativeQuery = true)
+public interface UserRepository extends MongoRepository<User, String> {
+    Optional<User> findByUsername(String username);
     Optional<User> findByEmail(String email);
 }

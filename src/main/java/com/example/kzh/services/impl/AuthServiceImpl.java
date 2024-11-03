@@ -51,8 +51,7 @@ public class AuthServiceImpl implements AuthService {
 
         User user = new User();
         user.setEmail(registerUserRequestDto.getEmail());
-        user.setFirstName(registerUserRequestDto.getFirstName());
-        user.setLastName(registerUserRequestDto.getLastName());
+        user.setUsername(registerUserRequestDto.getUsername());
         user.setPassword(passwordEncoder.encode(registerUserRequestDto.getPassword()));
         user.setRole(Role.USER);
 
@@ -69,7 +68,7 @@ public class AuthServiceImpl implements AuthService {
                 )
         );
 
-        User user = userRepository.findByEmail(authRequest.getEmail())
+        User user = userRepository.findByUsername(authRequest.getEmail())
                 .orElseThrow(() -> new DbNotFoundException(HttpStatus.BAD_REQUEST.getReasonPhrase(), "User doesn't exist"));
 
         String accessToken = jwtService.generateToken(user);

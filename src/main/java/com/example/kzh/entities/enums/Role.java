@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.example.kzh.entities.enums.Permission.*;
+import static com.example.kzh.entities.enums.Permission.QUIZ_PERMISSIONS;
 
 @Getter
 @RequiredArgsConstructor

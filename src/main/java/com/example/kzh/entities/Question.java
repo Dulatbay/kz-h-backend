@@ -1,72 +1,36 @@
 package com.example.kzh.entities;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import lombok.*;
+import com.example.kzh.entities.enums.Language;
+import com.example.kzh.entities.enums.Level;
+import com.example.kzh.entities.helpers.Variant;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+import org.springframework.data.mongodb.core.mapping.*;
 
 import java.util.Set;
 
-@Setter
+@Document(collection = "questions")
+@Accessors(chain = true)
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Entity
-@Table(name = "question")
-public class Question extends AbstractEntity<Long> {
+@Setter
+public class Question {
 
-    @Column(name = "text", nullable = false)
-    private String questionText;
+    @MongoId(FieldType.OBJECT_ID)
+    private String id;
 
-    @Column(name = "has_image")
-    private boolean hasImage;
+    @Field(targetType = FieldType.STRING)
+    private Language language;
 
-    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<QuestionCorrectVariant> questionCorrectVariant;
+    private String content;
+    private String imageUrl;
+    private Level level;
 
-    @Column(name = "level", nullable = false)
-    @Min(value = 1, message = "Level must be more than 0")
-    @Max(value = 3, message = "Level must be smaller than 3")
-    private int level;
-
-    @Column(name = "is_verified")
-    private boolean isVerified;
-
-    @Column(name = "has_term")
-    private boolean hasTerm;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author_id")
+    @DBRef
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "topic_id")
-    private Topic topic;
+    @DBRef
+    private Set<Topic> topics;
 
-    @OneToMany(mappedBy = "question",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL)
-    private Set<QuestionTerm> questionTerm;
-
-    @OneToMany(mappedBy = "question",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL)
-    private Set<QuestionImages> questionImages;
-
-    @OneToMany(mappedBy = "question",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL)
-    private Set<PassedQuestion> passedQuestions;
-
-    @OneToMany(mappedBy = "question",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL)
-    private Set<QuizQuestion> questions;
-
-    @OneToMany(mappedBy = "question",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL)
     private Set<Variant> variants;
-
 }
-

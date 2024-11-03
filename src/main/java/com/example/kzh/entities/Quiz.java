@@ -1,55 +1,38 @@
 package com.example.kzh.entities;
 
 import com.example.kzh.entities.enums.Language;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import lombok.*;
+import com.example.kzh.entities.enums.Level;
+import com.example.kzh.entities.helpers.QuizQuestion;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+import org.springframework.data.mongodb.core.mapping.*;
 
 import java.util.HashSet;
 import java.util.Set;
 
-@Setter
+@Document(collection = "quizzes")
+@Accessors(chain = true)
 @Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@Entity
-@Table(name = "quiz")
-public class Quiz extends AbstractEntity<Long> {
+@Setter
+public class Quiz {
 
-    @Column(name = "title", nullable = false)
+    @MongoId(FieldType.OBJECT_ID)
+    private String id;
+
     private String title;
-
-    @Column(name = "description", nullable = false)
     private String description;
-
-    @Column(name = "is_verified", nullable = false)
     private boolean isVerified;
 
-    @Column(name = "show_questions", nullable = false)
+    @Field(targetType = FieldType.STRING)
+    private Level level;
+
+    @Field(targetType = FieldType.STRING)
+    private Language language;
     private boolean showQuestions;
 
-    @Column(name = "language")
-    private Language language;
+    @DBRef
+    private User author;
 
-    // todo: trigger
-    @Column(name = "level", nullable = false)
-    @Min(value = 1, message = "Level must be more than 0")
-    @Max(value = 3, message = "Level must be smaller than 3")
-    private double level;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author_id", nullable = false)
-    private User user;
-
-    @OneToMany(mappedBy = "quiz", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<RatingQuiz> ratingQuizzes;
-
-    @OneToMany(mappedBy = "quiz", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<QuizQuestion> quizQuestions = new HashSet<>();
-
-    @OneToMany(mappedBy = "quiz", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<PassedQuiz> passedQuizzes;
+    private Set<QuizQuestion> questionsWithDuration = new HashSet<>();
 }
-

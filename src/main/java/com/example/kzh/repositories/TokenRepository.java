@@ -1,18 +1,11 @@
 package com.example.kzh.repositories;
 
 import com.example.kzh.entities.Token;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface TokenRepository extends JpaRepository<Token, Long> {
-
-    @Query(value = """
-            select t from Token t inner join User u\s
-            on t.user.id = u.id\s
-            where u.id = :id and (t.expired = false or t.revoked = false)\s
-            """)
-    List<Token> findAllValidTokenByUser(Long id);
-}
+public interface TokenRepository extends MongoRepository<Token, String> {
+    @Query("{ 'user.$id': ?0, $or: [ { 'expired': false }, { 'revoked': false } ] }")
+    List<Token> findAllValidTokenByUser(String userId);}

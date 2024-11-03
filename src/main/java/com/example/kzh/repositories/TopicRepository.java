@@ -1,11 +1,10 @@
 package com.example.kzh.repositories;
 
 import com.example.kzh.entities.Topic;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-import java.util.List;
+import java.util.Set;
 
-public interface TopicRepository extends JpaRepository<Topic, Long> {
-    List<Topic> findAllByDeletedIsFalse(Sort sort);
+public interface TopicRepository extends MongoRepository<Topic, String> {
+    Set<Topic> findByIdIn(Set<String> ids);
 }

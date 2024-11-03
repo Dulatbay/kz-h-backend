@@ -1,5 +1,6 @@
 package com.example.kzh.dto.params;
 
+import com.example.kzh.entities.enums.Level;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -7,7 +8,7 @@ import java.util.List;
 
 @Data
 public class QuizParams {
-    private Integer difficulty;
+    private Level level;
     private Boolean status;
     private List<Long> topics = new ArrayList<>();
     private String searchText;

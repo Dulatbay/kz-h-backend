@@ -3,9 +3,7 @@ package com.example.kzh.controllers;
 import com.example.kzh.constants.Utils;
 import com.example.kzh.dto.params.QuizParams;
 import com.example.kzh.dto.request.QuizCreateRequest;
-import com.example.kzh.dto.response.PaginatedResponse;
-import com.example.kzh.dto.response.QuizByIdResponse;
-import com.example.kzh.dto.response.QuizResponse;
+import com.example.kzh.dto.response.*;
 import com.example.kzh.services.QuizService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -44,12 +42,12 @@ public class QuizController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<QuizByIdResponse> getQuizById(@PathVariable Long id){
+    public ResponseEntity<QuizByIdResponse> getQuizById(@PathVariable String id) {
         return ResponseEntity.ok(quizService.getQuizById(id));
     }
 
     @GetMapping("/random")
-    public ResponseEntity<QuizByIdResponse> getRandomQuiz(){
+    public ResponseEntity<QuizByIdResponse> getRandomQuiz() {
         return ResponseEntity.ok(quizService.getRandomQuiz());
     }
 }

@@ -19,11 +19,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 public class SecurityBeansConfig {
 
-    private final UserRepository repository;
+    private final UserRepository userRepository;
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> (UserDetails) repository.findByEmail(username)
+        return username -> (UserDetails) userRepository.findByEmail(username)
                 .orElseThrow(() -> new DbNotFoundException(HttpStatus.BAD_REQUEST.getReasonPhrase(), "Invalid credentials"));
     }
 

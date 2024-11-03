@@ -1,12 +1,15 @@
 package com.example.kzh.dto.request;
 
+import com.example.kzh.config.validators.EitherOr;
 import com.example.kzh.entities.enums.Language;
+import com.example.kzh.entities.enums.Level;
+import com.example.kzh.entities.helpers.Variant;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.Getter;
 import org.hibernate.validator.constraints.UniqueElements;
 
 import java.util.ArrayList;
@@ -28,27 +31,34 @@ public class QuizCreateRequest {
     @Size(min = 2)
     private List<@Valid QuestionCreateRequest> questionCreateRequests = new ArrayList<>();
 
+    @Getter
+    @EitherOr
     public static class QuestionCreateRequest {
-        public boolean isGenerated;
-        public Long questionId;
-        public String question;
-        public Long topicId;
+        QuestionGenerate questionGenerate;
+        QuestionCreate questionCreate;
+    }
 
-        @NotNull
-        public Integer level;
-
-        @NotNull
-        @Min(5)
-        @Min(300)
-        public Short durationInSeconds;
-
-        @Size(min = 1)
-        @UniqueElements
-        @NotNull
-        public Set<@NotBlank String> correctAnswers;
+    @Getter
+    public static class QuestionGenerate {
+        private String questionId;
+        private Integer durationInSeconds;
 
         @Size(min = 2)
         @UniqueElements
-        public List<@NotBlank String> options;
+        private Set<@NotNull Variant> variants;
+    }
+
+    @Getter
+    public static class QuestionCreate {
+        private String question;
+        private Set<String> topicId;
+
+        @NotNull
+        private Level level;
+        private Integer durationInSeconds;
+
+        @Size(min = 2)
+        @UniqueElements
+        private Set<@NotNull Variant> variants;
     }
 }

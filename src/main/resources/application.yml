@@ -1,14 +1,14 @@
 spring:
   application:
     name: KzH
-  datasource:
-    url: jdbc:postgresql://${DATABASE_DOMAIN:localhost}:${DATABASE_PORT:5432}/${DATABASE_NAME:kzh}
-    username: ${DATABASE_USERNAME:user_qit}
-    password: ${DATABASE_PASSWORD:123}
-    driver-class-name: org.postgresql.Driver
+  data:
+    mongodb:
+      uri: mongodb://user_qit:123@localhost:27017/admin
+      database: kzh
+      auto-index-creation: true
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -19,7 +19,7 @@ spring:
     init:
       mode: always
 
-application: #todo: change if needed
+application:
   security:
     jwt:
       secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
@@ -34,3 +34,12 @@ server:
     include-message: always
   port: ${PORT:8080}
   address: 0.0.0.0
+
+logging:
+  level:
+    org:
+      springframework:
+        data:
+          mongodb:
+            core:
+              MongoTemplate: debug
