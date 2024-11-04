@@ -68,7 +68,7 @@ public class AuthServiceImpl implements AuthService {
                 )
         );
 
-        User user = userRepository.findByUsername(authRequest.getEmail())
+        User user = userRepository.findByEmail(authRequest.getEmail())
                 .orElseThrow(() -> new DbNotFoundException(HttpStatus.BAD_REQUEST.getReasonPhrase(), "User doesn't exist"));
 
         String accessToken = jwtService.generateToken(user);

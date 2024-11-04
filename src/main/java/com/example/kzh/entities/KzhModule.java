@@ -10,11 +10,11 @@ import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.util.Set;
 
-@Document(collation = "modules")
+@Document(collection = "modules")
 @Accessors(chain = true)
 @Setter
 @Getter
-public class Module {
+public class KzhModule {
     @MongoId(FieldType.OBJECT_ID)
     private String id;
 

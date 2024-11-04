@@ -10,14 +10,14 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ModuleResponse {
-    private Long moduleId;
+    private String moduleId;
     private String moduleName;
     private List<TopicResponse> topics;
 
     @AllArgsConstructor
     @Data
     public static class TopicResponse {
-        private Long topicId;
+        private String topicId;
         private String topicName;
     }
 }

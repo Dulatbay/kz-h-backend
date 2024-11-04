@@ -6,7 +6,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class QuizResponse {
-    private Long id;
+    private String id;
     private Boolean status;
     private String title;
     private int average;

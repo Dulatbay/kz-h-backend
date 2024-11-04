@@ -139,7 +139,14 @@ public class QuizServiceImpl implements QuizService {
     public QuizByIdResponse getQuizById(String id) {
         Quiz quiz = quizRepository.findById(id)
                 .orElseThrow(() -> new DbNotFoundException(HttpStatus.NOT_FOUND.getReasonPhrase(), "Quiz not found"));
-        return quizMapper.toQuizByIdResponse(quiz);
+        var result = quizMapper.toQuizByIdResponse(quiz);
+        var questionsOfQuiz = quiz.getQuestionsWithDuration().stream().map(i -> i.getQuestion().getContent()).toList();
+
+
+        result.setQuestions(questionsOfQuiz);
+        result.setQuestionsCount(questionsOfQuiz.size());
+
+        return result;
     }
 
     @Override

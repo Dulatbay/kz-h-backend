@@ -23,7 +23,7 @@ public class SecurityBeansConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> (UserDetails) userRepository.findByEmail(username)
+        return username -> (UserDetails) userRepository.findByUsername(username)
                 .orElseThrow(() -> new DbNotFoundException(HttpStatus.BAD_REQUEST.getReasonPhrase(), "Invalid credentials"));
     }
 

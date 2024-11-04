@@ -24,7 +24,7 @@ public class Topic {
     private int number;
 
     @DBRef
-    private Module module;
+    private KzhModule kzhModule;
 
     @DBRef
     private User user;
