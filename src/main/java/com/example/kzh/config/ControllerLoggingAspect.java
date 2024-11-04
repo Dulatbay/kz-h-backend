@@ -18,7 +18,7 @@ import java.util.Arrays;
 @Component
 public class ControllerLoggingAspect {
 
-    @Before("execution(* com.example.kzh.controllers..*(..))")
+    @Before("execution(*com.example.kzh.controllers..*(..))")
     public void logControllerMethodCall(JoinPoint joinPoint) {
         String url = getCurrentRequestUrl();
         String token = getCurrentRequestToken();

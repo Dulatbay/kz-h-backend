@@ -25,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Optional;
 
 
 @Service
@@ -42,10 +43,10 @@ public class AuthServiceImpl implements AuthService {
     public void registerUser(RegisterUserRequestDto registerUserRequestDto) {
         userRepository.findByEmail(registerUserRequestDto.getEmail().trim())
                 .ifPresent(usr -> {
-                    throw new IllegalArgumentException("User with email "+ registerUserRequestDto.getEmail() + " already exists");
+                    throw new IllegalArgumentException("User with email " + registerUserRequestDto.getEmail() + " already exists");
                 });
 
-        if(!registerUserRequestDto.getPassword().trim().equals(registerUserRequestDto.getConfirmPassword().trim())){
+        if (!registerUserRequestDto.getPassword().trim().equals(registerUserRequestDto.getConfirmPassword().trim())) {
             throw new IllegalArgumentException("Passwords do not match");
         }
 
@@ -61,15 +62,18 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthResponse authenticateUser(AuthRequest authRequest) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        authRequest.getEmail(),
-                        authRequest.getPassword()
-                )
-        );
+        Optional<User> userOptional = userRepository.findByEmail(authRequest.getEmailOrEmail())
+                .or(() -> userRepository.findByUsername(authRequest.getEmailOrEmail()));
 
-        User user = userRepository.findByEmail(authRequest.getEmail())
-                .orElseThrow(() -> new DbNotFoundException(HttpStatus.BAD_REQUEST.getReasonPhrase(), "User doesn't exist"));
+        if(userOptional.isEmpty()) {
+            throw new IllegalArgumentException("Invalid email/username or password");
+        }
+
+        var user = userOptional.get();
+
+        if (!passwordEncoder.matches(authRequest.getPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("Wrong password");
+        }
 
         String accessToken = jwtService.generateToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
@@ -108,7 +112,7 @@ public class AuthServiceImpl implements AuthService {
 
     public void refreshToken(
             HttpServletRequest request,
-            HttpServletResponse response) throws IOException{
+            HttpServletResponse response) throws IOException {
 
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         final String refreshToken;

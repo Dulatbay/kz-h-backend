@@ -18,7 +18,10 @@ public class Topic {
     private String id;
 
     @Indexed(unique = true)
-    private String title;
+    private String titleKaz;
+
+    @Indexed(unique = true)
+    private String titleRu;
 
     @Indexed
     private int number;
