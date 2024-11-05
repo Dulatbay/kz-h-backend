@@ -94,6 +94,8 @@ public class QuizServiceImpl implements QuizService {
             if (isGenerate) {
                 var question = generateQuestion(questionGenerateReq);
 
+                questionGenerateReq.getVariants().addAll(question.getVariants());
+
                 quizQuestion = createQuizQuestion(question,
                         questionGenerateReq.getVariants(),
                         questionGenerateReq.getDurationInSeconds()
@@ -125,6 +127,7 @@ public class QuizServiceImpl implements QuizService {
                 .orElseThrow(() -> new DbNotFoundException(HttpStatus.BAD_REQUEST.getReasonPhrase(), "Question not found"));
     }
 
+    // todo: transform to mapstruct
     private Question createQuestion(@Valid QuizCreateRequest.QuestionCreate questionCreate) {
         Question question = new Question();
         question.setContent(questionCreate.getQuestion());
