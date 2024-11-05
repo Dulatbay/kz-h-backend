@@ -9,7 +9,6 @@ import com.example.kzh.entities.helpers.QuizQuestion;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
-import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 import java.util.Set;
@@ -17,9 +16,6 @@ import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface QuizMapper {
-
-    QuizMapper INSTANCE = Mappers.getMapper(QuizMapper.class);
-
     QuizResponse toQuizResponse(Quiz quiz);
 
     @Mapping(target = "questions", source = "questionsWithDuration", qualifiedByName = "mapQuestions")
