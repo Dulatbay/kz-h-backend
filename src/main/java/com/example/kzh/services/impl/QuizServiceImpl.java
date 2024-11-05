@@ -8,6 +8,7 @@ import com.example.kzh.entities.*;
 import com.example.kzh.entities.helpers.QuizQuestion;
 import com.example.kzh.entities.helpers.Variant;
 import com.example.kzh.exceptions.DbNotFoundException;
+import com.example.kzh.mappers.QuestionMapper;
 import com.example.kzh.mappers.QuizMapper;
 import com.example.kzh.repositories.QuestionRepository;
 import com.example.kzh.repositories.QuizRepository;
@@ -47,6 +48,7 @@ public class QuizServiceImpl implements QuizService {
     private final MongoTemplate mongoTemplate;
     private final QuestionRepository questionRepository;
     private final TopicRepository topicRepository;
+    private final QuestionMapper questionMapper;
 
     @Override
     public Page<QuizResponse> getQuizzes(QuizParams request, User user) {
@@ -101,7 +103,7 @@ public class QuizServiceImpl implements QuizService {
                         questionGenerateReq.getDurationInSeconds()
                 );
             } else {
-                var question = createQuestion(questionCreateReq);
+                var question = questionMapper.toQuestion(questionCreateReq);
 
                 quizQuestion = createQuizQuestion(question,
                         questionCreateReq.getVariants(),
@@ -127,16 +129,6 @@ public class QuizServiceImpl implements QuizService {
                 .orElseThrow(() -> new DbNotFoundException(HttpStatus.BAD_REQUEST.getReasonPhrase(), "Question not found"));
     }
 
-    // todo: transform to mapstruct
-    private Question createQuestion(@Valid QuizCreateRequest.QuestionCreate questionCreate) {
-        Question question = new Question();
-        question.setContent(questionCreate.getQuestion());
-        question.setLevel(questionCreate.getLevel());
-        question.setTopics(topicRepository.findByIdIn(questionCreate.getTopicId()));
-        question.setVariants(questionCreate.getVariants());
-        question.setLanguage(question.getLanguage());
-        return questionRepository.save(question);
-    }
 
     @Override
     public QuizByIdResponse getQuizById(String id) {
