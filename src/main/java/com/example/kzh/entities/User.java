@@ -1,6 +1,7 @@
 package com.example.kzh.entities;
 
 
+import com.example.kzh.entities.base.BaseEntity;
 import com.example.kzh.entities.enums.Role;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,11 +14,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
-@Document(collection  = "users")
+@Document(collection = "users")
 @Accessors
 @Getter
 @Setter
-public class User implements UserDetails {
+public class User extends BaseEntity implements UserDetails {
     @MongoId(FieldType.OBJECT_ID)
     private String id;
 

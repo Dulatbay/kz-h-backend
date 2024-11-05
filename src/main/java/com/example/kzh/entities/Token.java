@@ -1,5 +1,6 @@
 package com.example.kzh.entities;
 
+import com.example.kzh.entities.base.BaseEntity;
 import com.example.kzh.entities.enums.TokenType;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Token {
+public class Token extends BaseEntity {
 
     @MongoId(FieldType.OBJECT_ID)
     private String id;

@@ -1,5 +1,6 @@
 package com.example.kzh.entities;
 
+import com.example.kzh.entities.base.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -14,7 +15,7 @@ import java.util.Set;
 @Accessors(chain = true)
 @Setter
 @Getter
-public class KzhModule {
+public class KzhModule extends BaseEntity {
     @MongoId(FieldType.OBJECT_ID)
     private String id;
 

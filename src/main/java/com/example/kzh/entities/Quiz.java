@@ -1,5 +1,6 @@
 package com.example.kzh.entities;
 
+import com.example.kzh.entities.base.BaseEntity;
 import com.example.kzh.entities.enums.Language;
 import com.example.kzh.entities.enums.Level;
 import com.example.kzh.entities.helpers.QuizQuestion;
@@ -15,7 +16,7 @@ import java.util.Set;
 @Accessors(chain = true)
 @Getter
 @Setter
-public class Quiz {
+public class Quiz extends BaseEntity {
 
     @MongoId(FieldType.OBJECT_ID)
     private String id;
@@ -30,6 +31,9 @@ public class Quiz {
     @Field(targetType = FieldType.STRING)
     private Language language;
     private boolean showQuestions;
+
+    @DBRef
+    private User verifiedBy;
 
     @DBRef
     private User author;
