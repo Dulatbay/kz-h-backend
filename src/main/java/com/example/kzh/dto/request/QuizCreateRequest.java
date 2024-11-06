@@ -34,8 +34,8 @@ public class QuizCreateRequest {
     @Getter
     @EitherOr
     public static class QuestionCreateRequest {
-        QuestionGenerate questionGenerate;
-        QuestionCreate questionCreate;
+        @Valid QuestionGenerate questionGenerate;
+        @Valid QuestionCreate questionCreate;
     }
 
     @Getter
@@ -45,7 +45,7 @@ public class QuizCreateRequest {
 
         @Size(min = 2)
         @UniqueElements
-        private Set<@NotNull Variant> variants;
+        private List<@NotNull Variant> variants;
     }
 
     @Getter
@@ -59,6 +59,6 @@ public class QuizCreateRequest {
 
         @Size(min = 2)
         @UniqueElements
-        private Set<@NotNull Variant> variants;
+        private List<@NotNull Variant> variants;
     }
 }

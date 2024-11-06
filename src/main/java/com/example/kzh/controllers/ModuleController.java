@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Locale;
 
 
 @RestController
@@ -28,12 +27,6 @@ public class ModuleController {
 
     @GetMapping
     public ResponseEntity<List<ModuleResponse>> getAllTopicWithModules() {
-        var locale = LocaleContextHolder.getLocale();
-        log.info("locale.getDisplayLanguage: {}", locale.getDisplayLanguage());
-        log.info("locale.getLanguage: {}", locale.getLanguage());
-        log.info("locale.getCountry: {}", locale.getCountry());
-        log.info("locale.getISO3Country: {}", locale.getISO3Country());
-        log.info("locale.getISO3Language: {}", locale.getISO3Language());
         return ResponseEntity.ok(moduleService.getModulesAndTheirTopics());
     }
 

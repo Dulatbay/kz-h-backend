@@ -3,14 +3,13 @@ package com.example.kzh.entities;
 import com.example.kzh.entities.base.BaseEntity;
 import com.example.kzh.entities.enums.Language;
 import com.example.kzh.entities.enums.Level;
-import com.example.kzh.entities.helpers.QuizQuestion;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.data.mongodb.core.mapping.*;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Document(collection = "quizzes")
 @Accessors(chain = true)
@@ -38,5 +37,5 @@ public class Quiz extends BaseEntity {
     @DBRef
     private User author;
 
-    private Set<QuizQuestion> questionsWithDuration = new HashSet<>();
+    private List<QuizQuestion> quizQuestions = new ArrayList<>();
 }
