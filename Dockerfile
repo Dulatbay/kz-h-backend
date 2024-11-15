@@ -38,18 +38,7 @@ WORKDIR /app
 # Copy the built jar from the build stage
 COPY --from=build /app/build/libs/*.jar app.jar
 
-# Copy .env file
-COPY .env /app/.env
-
-# Install envsubst for environment variable substitution
-RUN apt-get update && apt-get install -y gettext-base && apt-get clean
-
-# Expose application port
 EXPOSE 8080
 
-# Entry point script
-COPY entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
-
-# Set entrypoint
-ENTRYPOINT ["/app/entrypoint.sh"]
+# Set the entrypoint
+ENTRYPOINT ["java", "-Dvertx.disableDnsResolver=true", "-Djava.net.preferIPv4Stack=true", "-jar", "app.jar"]
