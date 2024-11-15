@@ -36,7 +36,6 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final TokenRepository tokenRepository;
     private final JwtService jwtService;
-    private final AuthenticationManager authenticationManager;
 
     @Override
     public void registerUser(RegisterUserRequestDto registerUserRequestDto) {
@@ -148,3 +147,7 @@ public class AuthServiceImpl implements AuthService {
             throw new IllegalArgumentException("Token is empty");
     }
 }
+
+
+
+

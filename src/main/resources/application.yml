@@ -3,14 +3,14 @@ spring:
     name: KzH
   data:
     mongodb:
-      uri: mongodb://user_qit:123@localhost:27017/admin
+      uri: ${MONGODB_URI}
       database: kzh
       auto-index-creation: true
 
 application:
   security:
     jwt:
-      secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+      secret-key: ${JWT_SECRET_KEY}
       expiration: 86400000
       refresh-token:
         expiration: 604800000

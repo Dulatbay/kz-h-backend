@@ -10,12 +10,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public interface AuthService {
-
     void registerUser(RegisterUserRequestDto user);
 
     AuthResponse authenticateUser(AuthRequest auth);
 
     void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException;
-
 
 }

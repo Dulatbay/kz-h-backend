@@ -4,6 +4,7 @@ import com.example.kzh.config.validators.EitherOr;
 import com.example.kzh.entities.enums.Language;
 import com.example.kzh.entities.enums.Level;
 import com.example.kzh.entities.helpers.Variant;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
