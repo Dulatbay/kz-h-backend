@@ -1,7 +1,6 @@
 package com.example.kzh.mappers;
 
 import com.example.kzh.dto.response.SoloGamePreviousQuestion;
-import com.example.kzh.dto.response.SoloGameResponse;
 import com.example.kzh.entities.QuizQuestion;
 import com.example.kzh.entities.SoloGame;
 import com.example.kzh.entities.helpers.SoloGameAttempt;

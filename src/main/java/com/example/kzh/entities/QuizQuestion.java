@@ -24,10 +24,11 @@ public class QuizQuestion {
     @DBRef
     private Question question;
 
-    private List<Variant> variants;
+
+    private Set<Variant> variants;
     private int durationInSeconds;
 
-    public QuizQuestion(Question question, List<Variant> variants, int durationInSeconds) {
+    public QuizQuestion(Question question, Set<Variant> variants, int durationInSeconds) {
         this.question = question;
         this.variants = variants;
         this.durationInSeconds = durationInSeconds;

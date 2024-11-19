@@ -6,18 +6,14 @@ import com.example.kzh.dto.request.QuizCreateRequest;
 import com.example.kzh.dto.response.PaginatedResponse;
 import com.example.kzh.dto.response.QuizByIdResponse;
 import com.example.kzh.dto.response.QuizResponse;
-import com.example.kzh.dto.response.SoloGameResponse;
 import com.example.kzh.services.QuizService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 
 @RestController
@@ -56,28 +52,4 @@ public class QuizController {
     public ResponseEntity<QuizByIdResponse> getRandomQuiz() {
         return ResponseEntity.ok(quizService.getRandomQuiz());
     }
-
-    @PostMapping("/start/{quiz-id}")
-    @PreAuthorize("hasAuthority('quiz:play')")
-    public ResponseEntity<SoloGameResponse> startQuiz(@PathVariable("quiz-id") String quizId) {
-        var currentUser = Utils.getCurrentUser();
-
-        SoloGameResponse result = quizService.startSoloQuiz(quizId, currentUser);
-        return ResponseEntity.status(201).body(result);
-    }
-
-    @PostMapping("/next-question/{game-id}")
-    @PreAuthorize("hasAuthority('quiz:play')")
-    public ResponseEntity<SoloGameResponse> playQuiz(@PathVariable("game-id")
-                                                     String gameId,
-                                                     @RequestBody
-                                                     @UniqueElements
-                                                     List<String> selectedOptions) {
-        var currentUser = Utils.getCurrentUser();
-
-        SoloGameResponse result = quizService.playSoloQuiz(gameId, currentUser, selectedOptions);
-
-        return ResponseEntity.status(201).body(result);
-    }
-
 }

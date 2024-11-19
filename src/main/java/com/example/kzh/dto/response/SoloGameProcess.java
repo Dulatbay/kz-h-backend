@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class SoloGameResponse {
+public class SoloGameProcess {
     private String gameId;
     private int totalQuestions;
     private int currentQuestionIndex;

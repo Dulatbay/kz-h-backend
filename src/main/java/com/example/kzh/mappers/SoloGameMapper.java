@@ -1,7 +1,8 @@
 package com.example.kzh.mappers;
 
 import com.example.kzh.dto.response.SoloGameQuestion;
-import com.example.kzh.dto.response.SoloGameResponse;
+import com.example.kzh.dto.response.SoloGameProcess;
+import com.example.kzh.dto.response.SoloGameResultResponse;
 import com.example.kzh.entities.SoloGame;
 import com.example.kzh.entities.helpers.Variant;
 import com.example.kzh.mappers.dto.request.SoloGameCreateRequest;
@@ -18,7 +19,7 @@ public interface SoloGameMapper {
     @Mapping(target = "currentQuestionIndex", source = "currentQuestionIdx")
     @Mapping(target = "currentQuestion", source = "soloGame", qualifiedByName = "mapQuestion")
     @Mapping(target = "previousQuestion", ignore = true)
-    SoloGameResponse toResponse(SoloGame soloGame);
+    SoloGameProcess toProcessResponse(SoloGame soloGame);
 
     @Named("mapQuestion")
     default SoloGameQuestion mapQuestion(SoloGame soloGame) {
@@ -38,4 +39,6 @@ public interface SoloGameMapper {
 
     @Mapping(target = "attempts", expression = "java(java.util.List.of(soloGameCreateRequest.firstAttempt()))")
     SoloGame toEntity(SoloGameCreateRequest soloGameCreateRequest);
+
+//    SoloGameResultResponse toResult(SoloGame soloGame);
 }

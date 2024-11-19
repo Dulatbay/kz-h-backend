@@ -5,8 +5,8 @@ import com.example.kzh.entities.base.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,4 +18,16 @@ public class SoloGameAttempt extends BaseEntity {
     private List<Variant> selectedVariants;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+
+    public Duration getDuration() {
+        return Duration.between(startTime, endTime);
+    }
+
+    public boolean isFullyCorrect() {
+        var correctSelected = selectedVariants.stream().filter(Variant::isCorrect).count();
+        var correct = quizQuestion.getVariants().stream().filter(Variant::isCorrect).count();
+        return correctSelected == correct;
+    }
+
+
 }
