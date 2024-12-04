@@ -49,4 +49,5 @@ public class SoloGameController {
         return ResponseEntity.status(200).body(soloGameResultResponse);
     }
 
+
 }

@@ -6,6 +6,7 @@ import com.example.kzh.dto.request.QuizCreateRequest;
 import com.example.kzh.dto.response.PaginatedResponse;
 import com.example.kzh.dto.response.QuizByIdResponse;
 import com.example.kzh.dto.response.QuizResponse;
+import com.example.kzh.entities.helpers.Variant;
 import com.example.kzh.services.QuizService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -51,5 +54,15 @@ public class QuizController {
     @GetMapping("/random")
     public ResponseEntity<QuizByIdResponse> getRandomQuiz() {
         return ResponseEntity.ok(quizService.getRandomQuiz());
+    }
+
+    @GetMapping("/get-quizzes")
+    public ResponseEntity<List<QuizByIdResponse>> getRandomQuizzes(@RequestParam int size){
+        return ResponseEntity.ok(quizService.getRandomQuizzes(size));
+    }
+
+    @GetMapping("/{quiz-id}/check-for-fidelity")
+    public ResponseEntity<List<Variant>> getCorrectAnswers(@PathVariable("quiz-id") String quizId){
+        return ResponseEntity.ok(quizService.getCorrectVariantsByQuizId(quizId));
     }
 }
