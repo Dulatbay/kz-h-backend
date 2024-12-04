@@ -45,6 +45,7 @@ public class QuizServiceImpl implements QuizService {
     private final QuestionRepository questionRepository;
     private final QuestionMapper questionMapper;
     private final QuizQuestionRepository quizQuestionRepository;
+    private final SoloGameRepository soloGameRepository;
 
     @Override
     public Page<QuizResponse> getQuizzes(QuizParams request, User user) {
@@ -156,5 +157,37 @@ public class QuizServiceImpl implements QuizService {
 
         return quizMapper.toQuizByIdResponse(quiz);
     }
+
+    @Override
+    public List<QuizByIdResponse> getRandomQuizzes(int size) {
+        SampleOperation sampleOperation = Aggregation.sample(size);
+        Aggregation aggregation = Aggregation.newAggregation(sampleOperation);
+
+        AggregationResults<Quiz> results = mongoTemplate.aggregate(aggregation, "quizzes", Quiz.class);
+
+        List<Quiz> quizzes = results.getMappedResults();
+
+        if (quizzes.isEmpty()) {
+            throw new DbNotFoundException(HttpStatus.NOT_FOUND.getReasonPhrase(), "No quizzes found");
+        }
+
+        return quizzes.stream()
+                .map(quizMapper::toQuizByIdResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Variant> getCorrectVariantsByQuizId(String quizId) {
+        Quiz quiz = quizRepository.findById(quizId)
+                .orElseThrow(() -> new DbNotFoundException(HttpStatus.NOT_FOUND.getReasonPhrase(), "Quiz not found"));
+
+        return quiz
+                .getQuizQuestions()
+                .stream()
+                .flatMap(qq -> qq.getVariants().stream())
+                .filter(Variant::isCorrect)
+                .toList();
+    }
+
 }
 

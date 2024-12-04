@@ -5,9 +5,12 @@ import com.example.kzh.dto.request.QuizCreateRequest;
 import com.example.kzh.dto.response.QuizByIdResponse;
 import com.example.kzh.dto.response.QuizResponse;
 import com.example.kzh.entities.User;
+import com.example.kzh.entities.helpers.Variant;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public interface QuizService {
@@ -18,5 +21,9 @@ public interface QuizService {
     QuizByIdResponse getQuizById(String id);
 
     QuizByIdResponse getRandomQuiz();
+
+    List<QuizByIdResponse> getRandomQuizzes(int size);
+
+    List<Variant> getCorrectVariantsByQuizId(String quizId);
 }
 
