@@ -3,7 +3,6 @@ package com.example.kzh.controllers;
 import com.example.kzh.constants.Utils;
 import com.example.kzh.dto.response.SoloGameProcess;
 import com.example.kzh.dto.response.SoloGameResultResponse;
-import com.example.kzh.entities.helpers.Variant;
 import com.example.kzh.services.SoloGameService;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.UniqueElements;

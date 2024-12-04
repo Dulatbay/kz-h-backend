@@ -45,7 +45,6 @@ public class QuizServiceImpl implements QuizService {
     private final QuestionRepository questionRepository;
     private final QuestionMapper questionMapper;
     private final QuizQuestionRepository quizQuestionRepository;
-    private final SoloGameRepository soloGameRepository;
 
     @Override
     public Page<QuizResponse> getQuizzes(QuizParams request, User user) {
