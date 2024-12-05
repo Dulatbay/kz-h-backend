@@ -37,5 +37,6 @@ public class Quiz extends BaseEntity {
     @DBRef
     private User author;
 
+    @DBRef
     private List<QuizQuestion> quizQuestions = new ArrayList<>();
 }

@@ -1,7 +1,7 @@
 package com.example.kzh.constants;
 
 import com.example.kzh.entities.User;
-import com.example.kzh.entities.enums.Permission;
+import com.example.kzh.security.Permission;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.Authentication;

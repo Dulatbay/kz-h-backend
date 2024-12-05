@@ -2,7 +2,7 @@ package com.example.kzh.entities;
 
 
 import com.example.kzh.entities.base.BaseEntity;
-import com.example.kzh.entities.enums.Role;
+import com.example.kzh.security.Role;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;

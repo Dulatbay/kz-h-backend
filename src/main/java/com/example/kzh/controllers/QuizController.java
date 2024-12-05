@@ -1,7 +1,7 @@
 package com.example.kzh.controllers;
 
 import com.example.kzh.constants.Utils;
-import com.example.kzh.dto.params.QuizParams;
+import com.example.kzh.dto.params.QuizSearchParams;
 import com.example.kzh.dto.request.QuizCreateRequest;
 import com.example.kzh.dto.response.PaginatedResponse;
 import com.example.kzh.dto.response.QuizByIdResponse;
@@ -25,10 +25,10 @@ public class QuizController {
     private final QuizService quizService;
 
     @GetMapping
-    public ResponseEntity<PaginatedResponse<QuizResponse>> getQuizzes(@ModelAttribute @Valid QuizParams quizParams) {
+    public ResponseEntity<PaginatedResponse<QuizResponse>> getQuizzes(@ModelAttribute @Valid QuizSearchParams quizSearchParams) {
         var userDetails = Utils.getCurrentUser();
 
-        Page<QuizResponse> quizResponseDtos = quizService.getQuizzes(quizParams, userDetails);
+        Page<QuizResponse> quizResponseDtos = quizService.getQuizzes(quizSearchParams, userDetails);
 
         return ResponseEntity.ok(new PaginatedResponse<>(quizResponseDtos));
     }

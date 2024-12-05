@@ -1,7 +1,9 @@
 package com.example.kzh.services.impl;
 
-import com.example.kzh.dto.params.QuizParams;
+import com.example.kzh.dto.params.AdminQuizSearchParams;
+import com.example.kzh.dto.params.QuizSearchParams;
 import com.example.kzh.dto.request.QuizCreateRequest;
+import com.example.kzh.dto.request.VerifyQuizRequest;
 import com.example.kzh.dto.response.*;
 import com.example.kzh.entities.*;
 import com.example.kzh.entities.helpers.Variant;
@@ -16,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
@@ -28,9 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,29 +46,14 @@ public class QuizServiceImpl implements QuizService {
     private final QuizQuestionRepository quizQuestionRepository;
 
     @Override
-    public Page<QuizResponse> getQuizzes(QuizParams request, User user) {
-        Pageable pageable = PageRequest.of(request.getPage(), request.getSize());
-        Query query = new Query().with(pageable);
-
-        if (request.getLevel() != null) {
-            query.addCriteria(Criteria.where("level").is(request.getLevel()));
-        }
-
-
-        if (request.getTopics() != null && !request.getTopics().isEmpty()) {
-            query.addCriteria(Criteria.where("topics").in(request.getTopics()));
-        }
-
-        if (request.getSearchText() != null && !request.getSearchText().isEmpty()) {
-            query.addCriteria(Criteria.where("title").regex(request.getSearchText(), "i"));
-        }
+    public Page<QuizResponse> getQuizzes(QuizSearchParams request, User user) {
+        var pageable = PageRequest.of(request.getPage(), request.getSize());
+        var query = getQuizQueryByParams(request).with(pageable);
 
         List<Quiz> quizzes = mongoTemplate.find(query, Quiz.class);
         long count = mongoTemplate.count(query.skip(0).limit(0), Quiz.class);
 
-        List<QuizResponse> quizResponses = quizzes.stream()
-                .map(quizMapper::toQuizResponse)
-                .collect(Collectors.toList());
+        List<QuizResponse> quizResponses = quizzes.stream().map(quizMapper::toQuizResponse).collect(Collectors.toList());
 
         return new PageImpl<>(quizResponses, pageable, count);
     }
@@ -94,16 +78,11 @@ public class QuizServiceImpl implements QuizService {
 
                 questionGenerateReq.getVariants().addAll(question.getVariants());
 
-                quizQuestion = createQuizQuestion(question,
-                        new HashSet<>(questionGenerateReq.getVariants()),
-                        questionGenerateReq.getDurationInSeconds()
-                );
+                quizQuestion = createQuizQuestion(question, new HashSet<>(questionGenerateReq.getVariants()), questionGenerateReq.getDurationInSeconds());
             } else {
                 var question = questionMapper.toQuestion(questionCreateReq);
 
-                quizQuestion = createQuizQuestion(questionRepository.save(question),
-                        new HashSet<>(questionCreateReq.getVariants()),
-                        questionCreateReq.getDurationInSeconds());
+                quizQuestion = createQuizQuestion(questionRepository.save(question), new HashSet<>(questionCreateReq.getVariants()), questionCreateReq.getDurationInSeconds());
             }
 
             quizQuestion = quizQuestionRepository.save(quizQuestion);
@@ -123,15 +102,13 @@ public class QuizServiceImpl implements QuizService {
     private Question generateQuestion(@Valid QuizCreateRequest.QuestionGenerate questionGenerate) {
         var questionId = questionGenerate.getQuestionId();
 
-        return questionRepository.findById(questionId)
-                .orElseThrow(() -> new DbNotFoundException(HttpStatus.BAD_REQUEST.getReasonPhrase(), "Question not found"));
+        return questionRepository.findById(questionId).orElseThrow(() -> new DbNotFoundException(HttpStatus.BAD_REQUEST.getReasonPhrase(), "Question not found"));
     }
 
 
     @Override
     public QuizByIdResponse getQuizById(String id) {
-        Quiz quiz = quizRepository.findById(id)
-                .orElseThrow(() -> new DbNotFoundException(HttpStatus.NOT_FOUND.getReasonPhrase(), "Quiz not found"));
+        Quiz quiz = quizRepository.findById(id).orElseThrow(() -> new DbNotFoundException(HttpStatus.NOT_FOUND.getReasonPhrase(), "Quiz not found"));
         var result = quizMapper.toQuizByIdResponse(quiz);
         var questionsOfQuiz = quiz.getQuizQuestions().stream().map(i -> i.getQuestion().getContent()).toList();
 
@@ -155,6 +132,112 @@ public class QuizServiceImpl implements QuizService {
         }
 
         return quizMapper.toQuizByIdResponse(quiz);
+    }
+
+    @Override
+    public void verifyFull(User verifiedBy, String quizId) {
+        final Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new DbNotFoundException(HttpStatus.NOT_FOUND.getReasonPhrase(), "Quiz not found"));
+        final List<QuizQuestion> quizQuestions = new ArrayList<>();
+        final List<Question> questions = new ArrayList<>();
+
+
+        quiz.getQuizQuestions()
+                .forEach(quizQuestion -> {
+                    quizQuestion.setVerified(true);
+                    quizQuestion.setVerifiedBy(verifiedBy);
+
+
+                    quizQuestion.getQuestion().setVerified(true);
+                    quizQuestion.getQuestion().setVerifiedBy(verifiedBy);
+
+                    quizQuestions.add(quizQuestion);
+                    questions.add(quizQuestion.getQuestion());
+                });
+
+        quizQuestionRepository.saveAll(quizQuestions);
+        questionRepository.saveAll(questions);
+
+        quiz.setVerified(true);
+        quiz.setVerifiedBy(verifiedBy);
+        quizRepository.save(quiz);
+    }
+
+    @Override
+    public Page<AdminQuizResponse> getAdminQuizzes(AdminQuizSearchParams quizSearchParams) {
+        var pageable = PageRequest.of(quizSearchParams.getPage(), quizSearchParams.getSize());
+        Query query = getQuizQueryByParams(quizSearchParams).with(pageable);
+
+        List<Quiz> quizzes = mongoTemplate.find(query, Quiz.class);
+        long count = mongoTemplate.count(query.skip(0).limit(0), Quiz.class);
+
+        List<AdminQuizResponse> adminQuizResponses = quizzes.stream()
+                .map(quiz -> new AdminQuizResponse())
+                .toList();
+
+        return new PageImpl<>(adminQuizResponses, pageable, count);
+    }
+
+    @Override
+    public void verifyPartial(User userDetails,
+                              String quizId,
+                              VerifyQuizRequest verifyQuizRequest) {
+        final Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new DbNotFoundException(HttpStatus.NOT_FOUND.getReasonPhrase(), "Quiz not found"));
+
+        approveQuestions(quiz, verifyQuizRequest.approveQuestionIds(), userDetails);
+    }
+
+    @Override
+    public AdminQuizDetailResponse getAdminQuizById(String quizId) {
+        final Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new DbNotFoundException(HttpStatus.NOT_FOUND.getReasonPhrase(), "Quiz not found"));
+
+        return new AdminQuizDetailResponse();
+    }
+
+    private void approveQuestions(Quiz quiz, List<String> questions, User verifiedBy) {
+        TreeSet<String> questionTreeSet = new TreeSet<>(questions);
+        List<Question> questionsToSave = new ArrayList<>();
+        List<QuizQuestion> quizQuestionsToSave = new ArrayList<>();
+
+
+        quiz.getQuizQuestions().stream()
+                .filter(i -> questionTreeSet.contains(i.getQuestion().getId()))
+                .forEach(quizQuestion -> {
+                    quizQuestion.setVerified(true);
+                    quizQuestion.setVerifiedBy(verifiedBy);
+
+                    quizQuestion.getQuestion().setVerified(true);
+                    quizQuestion.getQuestion().setVerifiedBy(verifiedBy);
+
+                    quizQuestionsToSave.add(quizQuestion);
+                    questionsToSave.add(quizQuestion.getQuestion());
+                });
+
+        quizQuestionRepository.saveAll(quizQuestionsToSave);
+        questionRepository.saveAll(questionsToSave);
+
+        quizRepository.save(quiz);
+    }
+
+    private static <T extends QuizSearchParams> Query getQuizQueryByParams(T quizSearchParams) {
+        Query query = new Query();
+        if (quizSearchParams.getLevel() != null) {
+            query.addCriteria(Criteria.where("level").is(quizSearchParams.getLevel()));
+        }
+        if (quizSearchParams.getTopics() != null && !quizSearchParams.getTopics().isEmpty()) {
+            query.addCriteria(Criteria.where("topics").in(quizSearchParams.getTopics()));
+        }
+        if (quizSearchParams.getSearchText() != null && !quizSearchParams.getSearchText().isEmpty()) {
+            query.addCriteria(Criteria.where("title").regex(quizSearchParams.getSearchText(), "i"));
+        }
+
+        if (quizSearchParams instanceof AdminQuizSearchParams adminSearchParams) {
+            if (adminSearchParams.getVerified() != null)
+                query.addCriteria(Criteria.where("isVerified").is(adminSearchParams.getVerified()));
+            if (adminSearchParams.getAuthorName() != null && !adminSearchParams.getAuthorName().isEmpty())
+                query.addCriteria(Criteria.where("author").regex(adminSearchParams.getAuthorName(), "i"));
+        }
+
+        return query;
     }
 }
 

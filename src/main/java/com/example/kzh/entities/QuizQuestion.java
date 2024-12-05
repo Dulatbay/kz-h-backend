@@ -4,10 +4,7 @@ import com.example.kzh.entities.helpers.Variant;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.FieldType;
-import org.springframework.data.mongodb.core.mapping.MongoId;
+import org.springframework.data.mongodb.core.mapping.*;
 
 import java.util.List;
 import java.util.Set;
@@ -24,9 +21,13 @@ public class QuizQuestion {
     @DBRef
     private Question question;
 
-
     private Set<Variant> variants;
     private int durationInSeconds;
+
+    @DBRef
+    private User verifiedBy;
+    @Field
+    private boolean isVerified = false;
 
     public QuizQuestion(Question question, Set<Variant> variants, int durationInSeconds) {
         this.question = question;

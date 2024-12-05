@@ -1,18 +1,18 @@
 package com.example.kzh.dto.params;
 
 import com.example.kzh.entities.enums.Level;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
-public class QuizParams {
+@Getter
+@Setter
+public class QuizSearchParams extends PaginationParams {
     private Level level;
     private Boolean status;
     private List<Long> topics = new ArrayList<>();
     private String searchText;
-    private int page;
-    private int size;
 }
 
