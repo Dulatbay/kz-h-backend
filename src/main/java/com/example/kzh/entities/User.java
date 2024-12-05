@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 
 @Document(collection = "users")
-@Accessors
+@Accessors(chain = true)
 @Getter
 @Setter
 public class User extends BaseEntity implements UserDetails {

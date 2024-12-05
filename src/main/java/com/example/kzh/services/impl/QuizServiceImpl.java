@@ -6,6 +6,7 @@ import com.example.kzh.dto.request.QuizCreateRequest;
 import com.example.kzh.dto.request.VerifyQuizRequest;
 import com.example.kzh.dto.response.*;
 import com.example.kzh.entities.*;
+import com.example.kzh.entities.enums.Language;
 import com.example.kzh.entities.helpers.Variant;
 import com.example.kzh.exceptions.DbNotFoundException;
 import com.example.kzh.mappers.QuestionMapper;
@@ -15,6 +16,7 @@ import com.example.kzh.services.QuizService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -47,6 +49,9 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public Page<QuizResponse> getQuizzes(QuizSearchParams request, User user) {
+        var locale = LocaleContextHolder.getLocale();
+        request.setLanguage(Language.getLanguage(locale.getLanguage()));
+
         var pageable = PageRequest.of(request.getPage(), request.getSize());
         var query = getQuizQueryByParams(request).with(pageable);
 
@@ -108,7 +113,8 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public QuizByIdResponse getQuizById(String id) {
-        Quiz quiz = quizRepository.findById(id).orElseThrow(() -> new DbNotFoundException(HttpStatus.NOT_FOUND.getReasonPhrase(), "Quiz not found"));
+        Quiz quiz = quizRepository.findById(id)
+                .orElseThrow(() -> new DbNotFoundException(HttpStatus.NOT_FOUND.getReasonPhrase(), "Quiz not found"));
         var result = quizMapper.toQuizByIdResponse(quiz);
         var questionsOfQuiz = quiz.getQuizQuestions().stream().map(i -> i.getQuestion().getContent()).toList();
 
@@ -164,6 +170,9 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public Page<AdminQuizResponse> getAdminQuizzes(AdminQuizSearchParams quizSearchParams) {
+        var locale = LocaleContextHolder.getLocale();
+        quizSearchParams.setLanguage(Language.getLanguage(locale.getLanguage()));
+
         var pageable = PageRequest.of(quizSearchParams.getPage(), quizSearchParams.getSize());
         Query query = getQuizQueryByParams(quizSearchParams).with(pageable);
 
@@ -171,7 +180,8 @@ public class QuizServiceImpl implements QuizService {
         long count = mongoTemplate.count(query.skip(0).limit(0), Quiz.class);
 
         List<AdminQuizResponse> adminQuizResponses = quizzes.stream()
-                .map(quiz -> new AdminQuizResponse())
+//                .map(quizMapper::toAdminQuizResponse)
+                .map(q -> new AdminQuizResponse())
                 .toList();
 
         return new PageImpl<>(adminQuizResponses, pageable, count);
@@ -190,7 +200,8 @@ public class QuizServiceImpl implements QuizService {
     public AdminQuizDetailResponse getAdminQuizById(String quizId) {
         final Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new DbNotFoundException(HttpStatus.NOT_FOUND.getReasonPhrase(), "Quiz not found"));
 
-        return new AdminQuizDetailResponse();
+//        return quizMapper.toAdminQuizDetailResponse(quiz);
+        return null;
     }
 
     private void approveQuestions(Quiz quiz, List<String> questions, User verifiedBy) {
@@ -220,6 +231,9 @@ public class QuizServiceImpl implements QuizService {
 
     private static <T extends QuizSearchParams> Query getQuizQueryByParams(T quizSearchParams) {
         Query query = new Query();
+
+        query.addCriteria(Criteria.where("language").is(quizSearchParams.getLanguage()));
+
         if (quizSearchParams.getLevel() != null) {
             query.addCriteria(Criteria.where("level").is(quizSearchParams.getLevel()));
         }

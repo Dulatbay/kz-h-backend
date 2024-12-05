@@ -16,5 +16,6 @@ public class QuizByIdResponse {
     private String title;
     private String description;
     private List<String> questions;
+    private boolean isVerified;
     private int questionsCount;
 }

@@ -8,6 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 public class AdminQuizResponse extends QuizResponse {
     private String author;
-    private boolean verified;
+    private boolean isVerified;
 }
 
