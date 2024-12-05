@@ -13,6 +13,6 @@ public class QuizResponse {
     private String title;
     private int average;
     private int difficulty;
-    private Long questions;
+    private int questions;
 }
 

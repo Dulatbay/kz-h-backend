@@ -13,7 +13,6 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-@Service
 public interface QuizService {
     Page<QuizResponse> getQuizzes(QuizSearchParams request, User user);
 
